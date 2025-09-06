@@ -1,0 +1,12 @@
+{
+  "n_samples": 500,
+  "n_features": 100,
+  "n_classes": 5,
+  "corr": 0.0,
+  "offset_signal": 1.0,
+  "std_dev_offdiag": 0.05,
+  "min_eig_floor": 0.01,
+  "kappa_max": 1000.0,
+  "min_eig_Sigma": 0.07366716601775916,
+  "cond_Sigma": 26.36315217758664
+}
