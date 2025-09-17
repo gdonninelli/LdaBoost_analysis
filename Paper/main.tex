@@ -1,0 +1,485 @@
+\documentclass[11pt,a4paper]{article}
+
+% Packages
+\usepackage[T1]{fontenc}
+\usepackage{lmodern} % better fonts
+\usepackage{microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage{authblk}
+\usepackage[round]{natbib}
+\usepackage[hidelinks]{hyperref} % load before orcidlink
+\usepackage{orcidlink}
+\usepackage{amsmath}
+\usepackage{amssymb}
+ \usepackage{booktabs}
+ \usepackage{multirow}
+ \usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage[ruled,vlined]{algorithm2e}
+
+% Consistent math macros (optional but recommended)
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\SB}{\mathbf{S}_B}
+\newcommand{\SW}{\mathbf{S}_W}
+
+
+\title{Does Gradient Boosting improve with Fisher’s Discriminant analysis? Proposal of an integrated approach and empirical assessment of five popular datasets.}
+
+\author[1,2]{Giulio Enzo Donninelli\thanks{Email: \href{mailto:g.donninelli@campus.unimib.it}{g.donninelli@campus.unimib.it} \quad ORCID: \orcidlink{0009-0009-7332-1159}}}
+\author[1,2]{Pietro Giorgio Lovaglio\thanks{Email: \href{mailto:piergiorgio.lovaglio@unimib.it}{piergiorgio.lovaglio@unimib.it} \quad ORCID: \orcidlink{0000-0002-2340-0547}}}
+
+\affil[1]{Dept of Statistics and Quantitative Methods, University of Milano-Bicocca, Milan, Italy}
+\affil[2]{CRISP Research Center, University of Milano-Bicocca, Milan, Italy}
+
+\date{} % omit date
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The aim of this study is to assess the impact of different dimensionality reduction techniques—specifically Principal Component Analysis (PCA) and Linear Discriminant Analysis (LDA)—on the classification performance of Gradient Boosting Machines (GBM). While PCA is commonly employed to reduce feature dimensionality, often to speed up training or lower memory usage, its application is not standard in boosting pipelines. Moreover, to the best of our knowledge, no previous work has systematically explored whether LDA can enhance performance or is compatible with gradient boosting frameworks.\\[2ex]
+
+In addition to evaluating the effects of PCA and LDA on the predictive performance of GBM, we introduce a novel integrated iterative algorithm that incorporates LDA-based feature transformation at each boosting step. Our analysis spans five classical benchmark datasets, representing diverse scenarios in terms of sample size, number of features, and both binary and multiclass targets. Results show that applying LDA to extract features—and especially using the proposed LDA-integrated GBM—significantly improves classification accuracy compared to standard GBM, particularly in multiclass settings or in binary problems with high feature dimensionality. Finally, through a set of controlled simulations, we investigate how the performance of the integrated approach evolves with increasing feature dimensionality and varying levels of feature correlation.
+
+\end{abstract}
+
+\section*{Statements}
+\noindent\textbf{Data availability statement:} data are freely available online.\\
+\textbf{Funding statement:} no funding received.\\
+\textbf{Conflict of interest disclosure:} Authors have no conflicts of interest.
+
+\newpage
+\section{Introduction}
+Real-world datasets often exhibit high dimensionality, which can hinder the performance of machine learning models. A common strategy to address this challenge is dimensionality reduction \citep{van2009dimensionality}. This involves transforming high-dimensional data into a more compact and informative representation, ideally one that reflects the data's intrinsic dimensionality \citep{huang2019dimensionality, bacanin2021dimensionality}.
+
+Dimensionality reduction plays a critical role in machine learning by addressing the high dimensionality often present in real-world data, thereby improving computational efficiency. By extracting the most informative features, it enables faster and more scalable algorithms---an essential advantage in real-time or resource-constrained applications.
+Beyond computational gains, dimensionality reduction also mitigates the effects of the curse of dimensionality, which can significantly degrade model performance \citep{hu2024tackling}. For example, classification trees are prone to overfitting when trained on data with many irrelevant features, often resulting in higher misclassification rates on test sets.
+In practice, dimensionality reduction not only reduces these risks but also facilitates the compression of high-dimensional data, ultimately supporting more accurate and efficient classification \citep{garcia2023evolutionary}.
+
+Among the various data reduction techniques, feature extraction (FE) focuses on transforming the original feature space to generate new variables that form a more compact, lower-dimensional representation of the problem. Unlike unsupervised FE methods, supervised FE techniques aim not only to reduce dimensionality but also to preserve class separability as much as possible \citep{fukunaga2013introduction}.
+Common examples of unsupervised linear feature extraction methods include Principal Component Analysis (PCA) and Independent Component Analysis (ICA), which do not take class labels into account. In contrast, supervised methods such as Fisher's Linear Discriminant Analysis (LDA) and Partial Least Squares (PLS) explicitly incorporate class information to enhance discriminative power \citep{james2013introduction}.
+
+Extending the first family of methods, manifold-based learning techniques aim to capture the nonlinear structure of the original data by uncovering its intrinsic local geometric properties. These approaches are based on the premise that the apparent high dimensionality of many datasets is often artificial \citep{zhou2011manifold}. Accordingly, they seek a lower-dimensional representation within a manifold---a topological space that is locally Euclidean---capable of preserving the underlying data structure.
+Widely used examples include Locally Linear Embedding (LLE) \citep{roweis2000nonlinear}, Isometric Mapping (ISOMAP) \citep{tenenbaum2000global}, and Laplacian Eigenmaps (LE) \citep{belkin2003laplacian}. Another nonlinear approach that has gained popularity in recent years is the Autoencoder, which functions as an unsupervised multilayer perceptron for dimensionality reduction.
+However, a major limitation of manifold learning methods is the lack of an explicit projection function, making them unable to handle new, unseen samples---commonly referred to as the out-of-sample problem \citep{bengio2003out}. This practical drawback helps explain the continued widespread use of linear feature extraction methods such as PCA, which offer both simplicity and robustness in real-world applications \citep{zebari2020comprehensive, sadegh2024comparative}.
+A key limitation of PCA is that it identifies directions of maximum variance in the input space without regard to the target variable. As a result, the principal components may lack any discriminative power for classification tasks. Consistent with this, the literature has shown that supervised feature extraction methods generally outperform their unsupervised counterparts.
+Among these, Fisher's Linear Discriminant Analysis (LDA) is perhaps the most widely used supervised technique and has been shown to yield superior performance compared to PCA across a range of machine learning algorithms. This advantage stems from LDA's objective: it seeks linear combinations of the original predictors that maximize the separation between class means while minimizing within-class variance.
+However, LDA comes with an inherent constraint: the number of extracted components is limited to $C - 1$, where $C$ is the number of classes. This is because LDA constructs a feature space optimized for discriminating among classes and thus only requires at most $C - 1$ dimensions to achieve optimal class separation. As a result, LDA can be viewed as an aggressive form of dimensionality reduction, compressing the original $p$-dimensional predictor space into a space of at most $K - 1$ dimensions. In the extreme case of a binary classification problem ($C = 2$), LDA produces only a single discriminant component.
+In empirical studies comparing different feature extraction (FE) strategies, the classifiers used are often limited to traditional models such as logistic regression, classification trees, k-nearest neighbors (KNN), or Na\"ive Bayes. However, these models are rarely applied in real-world classification tasks due to their relatively limited performance compared to ensemble methods like Random Forest (RF) or Gradient Boosting Machines (GBM) \citep{fernandez2014we,  chen2016xgboost}.
+GBM is an iterative algorithm that combines multiple weak learners---typically shallow classification trees---into a strong predictive model. Each weak learner is trained to minimize the loss function of the previous ensemble using gradient descent. The learners are built sequentially, with each iteration aiming to model the residuals (errors) of the previous stage. This process continues iteratively, where each new learner corrects the mistakes of its predecessors, progressively improving overall model accuracy.
+
+Extreme Gradient Boosting (XGBoost; \citep{chen2016xgboost}) is a widely used implementation of GBM, known for its speed and strong performance in both applied settings and machine learning competitions. XGBoost incorporates regularization techniques and additional strategies---such as random selection of features for each weak learner---to mitigate overfitting.
+However, studies on preprocessing for GBM and XGBoost remain limited, typically focusing on standard procedures such as missing value imputation, outlier handling, and managing high collinearity or near-zero variance in input features \citep{gabriel2023optimizing, chen2016xgboost}.
+While not standard, the use of PCA prior to gradient boosting has not been extensively studied in the literature and is primarily mentioned in the context of machine learning competitions (such as the KDD Cup or Kaggle) as a heuristic to reduce feature dimensionality and, in some cases, to accelerate training or reduce memory consumption \citep{rakhshan2020tensorized}.
+In contrast, to the best of our knowledge, no existing study has explored the use of LDA in conjunction with GBM. Specifically, there is no established practice or empirical evidence suggesting that LDA enhances performance or is compatible with gradient boosting models. In this respect, it is perhaps unsurprising that LDA has not been incorporated as a preprocessing step in widely used automated machine learning (AutoML) frameworks \citep{NIPS2015_11d0e628}.
+
+The aim of this paper is twofold. First, it investigates the impact of feature extraction via Principal Component Analysis (PCA) and Linear Discriminant Analysis (LDA) on the classification accuracy of the Gradient Boosting Machine (GBM) algorithm. Second, in contrast to common approaches that apply machine learning models to a fixed set of preprocessed features, we propose an integrated iterative method that leverages LDA-based feature transformation at each stage of the GBM training process. This integration acknowledges the iterative nature of GBM, where the target variable is updated at each step as the residual of the previous weak learner. The resulting algorithm, which we refer to as LdaBoost, dynamically recalculates LDA projections throughout boosting iterations.
+The rationale behind this approach lies in the complementary strengths of LDA and GBM. While LDA projects data onto a lower-dimensional linear subspace that maximally separates the classes, the resulting projections serve as informative inputs for GBM, which constructs nonlinear decision boundaries through ensembles of shallow trees. For instance, in a three-class problem, LDA maps observations into a two-dimensional space where the classes form compact and well-separated clusters---structures that GBM can efficiently capture using combinations of simple, rectangular tree splits. This synergy is particularly beneficial in complex classification tasks where linear separability is insufficient on its own.
+To address both research objectives, we conduct a series of experiments on several classical benchmark datasets that cover a variety of scenarios in terms of sample size, feature dimensionality, and target type (binary and multiclass). We compare the classification performance of standard GBM with and without dimensionality reduction, applying PCA, LDA, and the proposed LdaBoost algorithm. The results show that incorporating LDA-based features substantially enhances GBM accuracy, with the integrated LdaBoost method yielding the most consistent and significant improvements over the baseline.
+In addition, we explore how the performance of LdaBoost varies with key data characteristics, specifically the number of input features and their average correlation. Using synthetic simulations, we examine these effects systematically, offering insights into the conditions under which LdaBoost is most beneficial. To the best of our knowledge, this is the first study to investigate the integration of LDA within a gradient boosting framework.
+
+The remainder of the paper is structured as follows: Section~2 reviews related work on feature extraction in machine learning, with a focus on PCA and LDA. Section~3 introduces the LdaBoost algorithm in detail. Section~4 describes the analysis framework and datasets used. Section~5 presents the main empirical findings, including results from the simulation study. Finally, Section~6 concludes the paper by summarizing the contributions and outlining directions for future research.
+
+
+\section{Related Work}
+Many authors have attempted to evaluate how feature extraction (FE) methods perform in classification tasks. Zebari et al. \citep{zebari2020comprehensive} provide an excellent review in this regard.  
+The authors reviewed 21 feature extraction methods from the literature. Among them, eight methods relied on PCA, while seven were based on Deep Neural Network (DNN) and Convolutional Neural Network (CNN) tools, some of which were integrated with autoencoders or PCA.  
+Other approaches aimed at dimensionality reduction used specific techniques for extracting features from machinery signals, such as Fourier transform frequency spectrum, envelope analysis, and local mean decomposition. Additionally, methods specific to image analysis adopted texture feature extraction and wavelet transformations.
+
+Most of the reviewed approaches are unsupervised FE methods, with some exceptions that integrate PCA or autoencoders with supervised DNN and CNN architectures used as wrapper feature extraction tools. Specifically, both semi-supervised algorithms select the most optimal features (neurons from hidden layers or image features from convolutional layers) based on the performance of the learning algorithm aimed at predicting the target variable.  
+Here, PCA was not used to extract the initial features for DNN and CNN but rather to reduce the dimensionality of the extracted features (neurons) from both neural network tools.  
+The findings demonstrated the efficacy of semi-supervised dimensionality reduction techniques in improving the performance of machine learning algorithms compared to unsupervised tools (essentially PCA).  
+However, no study has used LDA as a feature extraction method.
+
+In the above-cited review, the SVM algorithm was the most frequently used classifier in conjunction with feature extraction, followed by neural networks, KNN, and LDA.  
+The conclusion is that optimized PCA (within a semi-supervised approach) achieves better performance in terms of accuracy, computational time, and the number of reduced features \citep{ma2019dimension, zebari2020comprehensive}.  
+Apart from a few exceptions, however, classifiers used in the literature rarely include tree-based ensembles such as Random Forest (RF) or Bagging, and none of them incorporate GBM.
+
+As mentioned, only a few published studies have adopted LDA as a feature extraction method.  
+Subasi \citep{subasi2010eeg} classified epileptic seizures using EEG signals and an SVM classifier. The classification rate with LDA feature extraction was the highest (100\%), followed by ICA (99.5\%), while PCA achieved the lowest correct classification rate (98.75\%).  
+All FE strategies performed better than classification without feature extraction (98\%). Moreover, the proposed FE strategies outperformed the overall classification accuracy obtained using a Mixture of Experts model (94.5\%) and an Artificial Neural Network (93.2\%).
+
+Leo et al. \citep{leo2014efficient}, using a chemical sensor array dataset, fitted an SVM classifier with dimensionality reduction methods PCA and LDA. The authors demonstrated that LDA better separated the data to be classified, resulting in higher accuracy.
+
+Data from Human Activity Recognition (HAR), aimed at identifying human activity based on attributes measured by a smartphone's accelerometer and gyroscope, were also used to assess machine learning tools in conjunction with feature preprocessing.  
+In this field, using the Human Activity Recognition Using Smartphones Data Set (UCI Machine Learning Repository), Luštrek and Kaluža \citep{luvstrek2009fall} evaluated various algorithms (including C4.5 decision trees) using cross-validated classification accuracy.
+
+Cann \citep{cannfeature}, applying the C4.5 classification decision tree algorithm with LDA, found that such feature preprocessing increased accuracy by 1.61\% compared to using the original inputs.
+
+Pechenizkiy et al. \citep{pechenizkiy2006combining} proposed a novel feature extraction method combining two steps: first extracting principal components and then deriving discriminant components from the resulting PCA feature space.  
+However, this combined approach introduces some arbitrariness, as the discriminant components (scores) depend on the initial number of extracted principal components.  
+Yang \citep{yang2003can} recommends using more PCA dimensions to improve the performance of discriminant components in the second step.
+
+The authors assessed KNN, Naïve Bayes, and C4.5 decision tree algorithms on 21 datasets.  
+Although specific improvements depended on the dataset, combining LDA and PCA generally showed an overall increase in accuracy compared to using PCA or LDA alone, though the improvement over LDA was less pronounced.  
+Li \citep{li2009face} applied the same combined approach for face recognition using the nearest neighbor classifier and observed improved results compared to PCA alone.
+
+Liu et al. \citep{liu2019discriminative}, analyzing numerous public image datasets, developed a method for feature extraction based on combining discriminant analysis with the low-rank representation (LRR) of the original data samples.  
+In particular, LDA was used as a discriminative constraint term within the dimensionality reduction loss function, which was minimized with respect to the lowest-rank representation of the original data.  
+A projection matrix was simultaneously learned for dimensionality reduction and class separation.  
+The global subspace structure of the original samples was first captured by LRR, and then the discriminative constraint term was used to maximize the between-class distances and minimize the within-class distances in the low-dimensional projection space.
+
+The authors demonstrated that the proposed strategy achieved better recognition accuracy compared to state-of-the-art feature extraction methods.  
+Although the proposed supervised FE method was specifically designed for image processing, this approach illustrates that integrating discriminant analysis with supervised classifiers can be beneficial in terms of predictive accuracy.
+
+
+
+\section{Methods}
+
+
+Given $N$ training data $(x_1, y_1(c)), \dots, (x_N, y_N(c))$, where $x_i \in \mathbb{R}^p$ are the normalized original features and $y_i(c)$ are the labels of the $c = 1, \dots, C$ target classes.  
+
+PCA maps the feature space $x_i \in \mathbb{R}^p$ to a lower-dimensional space $t_i \in \mathbb{R}^r$ ($r \leq p$) through a linear transformation:
+\[
+t_i = P^\top x_i
+\]
+(Principal component scores), where these new $r$ variables are uncorrelated.
+
+The PCA criterion aims to maximize the sum of variances (trace) of the retained $r$ principal component scores, e.g. $\text{trace}(P^\top S P)$, where $P^\top S P$ is the covariance matrix of the principal component scores and $S$ is the covariance matrix of the original features $S = X^\top X$.  
+This is achieved by selecting the $r$ largest eigenvalues of $S$, and the corresponding eigenvectors $P_1, \dots, P_r$ form the optimal transformation matrix:
+\[
+P = [P_1 \ | \dots | \ P_r].
+\]
+
+LDA maps the feature space $x_i \in \mathbb{R}^p$ to a lower-dimensional space $q_i \in \mathbb{R}^r$ ($r < p$) through a linear transformation:
+\[
+q_i = G^\top x_i.
+\]
+Discriminant scores are weighted linear combinations of the predictors.  
+The weights are estimated to maximize the differences between class mean discriminant scores and are obtained as generalized eigenvectors that maximize the ratio of the between-class sum of squares ($S_B$) to the within-class sum of squares ($S_W$).  
+The former evaluates the spread of the class means ($\mu_c$) around the global mean ($\mu$), whereas the latter evaluates the spread of the data ($x_i$) around the class mean ($\mu_c$).
+
+For transformed data, the (transformed) within-class and between-class sums of squares are defined respectively as $G^\top S_W G$ and $G^\top S_B G$.  
+The LDA optimization problem requires minimizing the transformed within-class scatter while maximizing the transformed between-class scatter.  
+The optimal transformation $G$ can be obtained by maximizing the Fisher criterion:
+\[
+\frac{|G^\top S_B G|}{|G^\top S_W G|}
+\]
+by selecting the $r$ largest eigenvalues of $S_W^{-1} S_B$ and the corresponding eigenvectors $G_1, \dots, G_r$, which form the optimal transformation matrix:
+\[
+G = [G_1 \ | \dots | \ G_r].
+\]
+Generally, predictors with larger dissimilarities between class means will have larger weights, whereas weights will be small when class means are similar.
+
+Hence, LDA provides new $N$ training data $(q_1, y_1(c)), \dots, (q_N, y_N(c))$, where $q_i \in \mathbb{R}^r$ are the input $r$ variables retained after LDA computation (discriminant components).
+
+---
+
+Concerning the Gradient Boosting classifier, we use the classical GBM \citep{friedman2001greedy} implemented in the Python library \texttt{GradientBoostingClassifier} within Scikit-learn.  
+
+GBM builds an additive model in a forward stage-wise fashion using classification trees.  
+In each stage (\texttt{n\_estimators}), trees are fit on the negative gradient of the loss function, which is either the binary log-loss (binomial deviance) or the multiclass log-loss (the multinomial negative log-likelihood loss function) for multi-class classification with \texttt{n\_classes} mutually exclusive classes.
+
+The GBM is an additive model whose prediction $\hat{y}_i$ for a given input $x_i$ is defined as:
+\[
+\hat{y}_i = F_M(x_i) = \sum_{m=1}^M h_m(x_i) \tag{1}
+\]
+where $h_m$ is estimated by the $m$-th tree, and $M$ is the maximum number of trees used.  
+GBM proceeds in a greedy fashion:
+\[
+F_m(x) = F_{m-1}(x) + h_m(x),
+\]
+where, at iteration $m$, a newly added tree $h_m$ is fitted to minimize a sum of losses $L_m$, given the previous ensemble $F_{m-1}(x)$:
+\[
+h_m = \arg \min_h L_m = \arg \min_h \sum_{i=1}^n \ell \Big(y_i, F_{m-1}(x_i) + h(x_i)\Big). \tag{2}
+\]
+
+Moreover, GBM allows a regularization strategy that scales the contribution of each weak learner by a constant factor $\nu$ (\texttt{learning\_rate}):
+\[
+F_m(x) = F_{m-1}(x) + \nu h_m(x).
+\]
+At each iteration, the estimator $h_m(x)$ is fitted to predict the negative gradients of the samples.
+
+The iterative minimization of the loss function is achieved by Gradient Descent, using all instances in each iteration or a subsample of observations for fitting the individual trees (Stochastic or Batch Gradient Descent).
+
+The main tuning parameters for GBM are:  
+- the learning rate (\texttt{learning\_rate}),  
+- the maximum number of trees (\texttt{n\_estimators}),  
+- the maximum number of final nodes in each tree (\texttt{max\_depth}),  
+- the minimum number of observations in final nodes (\texttt{min\_samples\_leaf}),  
+- and the percentage of observations used in each stochastic gradient descent iteration (\texttt{subsample}).
+
+
+\subsection*{An integrated LdaBoosting algorithm}
+The key insight behind integrating LDA within the GBM algorithm—referred to as \textbf{LdaBoost}—is to dynamically leverage the discriminative power of LDA at each iteration of the boosting procedure.  
+Traditionally, LDA is employed as a pre-processing step to reduce feature dimensionality by projecting the original feature space onto a subspace optimized for class separability.  
+However, this static approach neglects the iterative nature of GBM, wherein the target changes at each step as the model seeks to correct residual errors from the preceding weak learner.
+
+In contrast, LdaBoost iteratively updates the feature projections using LDA based on the residuals produced at each boosting round, thereby continuously refining the feature space in alignment with the evolving predictions.  
+Specifically, at each iteration, LdaBoost calculates class-specific residuals, determines a corresponding transformed feature space via LDA tailored explicitly to these residuals, and subsequently trains individual trees on this optimized subspace.  
+This iterative integration not only capitalizes on LDA’s capacity to enhance linear class separation but also synergistically complements GBM’s nonlinear modeling strengths, resulting in improved classification accuracy.  
+
+The pseudocode, illustrated in Box 1, summarizes the LdaBoost procedure, clarifying the step-by-step algorithmic implementation of this integrated approach, as follows:
+
+\begin{itemize}
+    \item \textbf{Initialization.} One-hot encode labels $Y$ and estimate empirical class priors $\hat{\pi}_c$; initialize logits with $F^{(0)}_c = \log \hat{\pi}_c$ so boosting starts from the log prior odds shared by all samples.
+
+    \item \textbf{Step 1 – Iteration-specific LDA transform.} At $m=0$, fit LDA on true labels $y$ to get projection $G^{(0)}$ and discriminant scores $Q^{(0)}$ (each $q_i = G^{(0)\top} x_i$) in an $r \le C-1$ subspace that maximizes between-class separation.  
+    For $m>0$, form current probabilities $p^{(m-1)}$, gradients $g^{(m)} = Y - p^{(m-1)}$, relabel each sample by the class with the largest positive gradient, and refit LDA to obtain $G^{(m)}$, focusing the projection where the model is erring most.
+
+    \item \textbf{Step 2 – Pseudo-residuals.} Recompute $g^{(m)} = Y - p^{(m-1)}$; these are the negative gradients of the multinomial deviance with respect to the logits and provide the working response for the boosted trees.
+
+    \item \textbf{Step 3 – Class-wise weak learners.} Train one regression tree per class $c$ to predict the corresponding gradient column $g^{(m)}_{\cdot,c}$ from the current discriminant scores $Q^{(m)}$; using the LDA subspace concentrates each tree on directions most informative for class separation at round $m$.
+
+    \item \textbf{Step 4 – Stagewise update.} Update additive logits:
+    \[
+    F^{(m)}_{i,c} = F^{(m-1)}_{i,c} + \nu \, h_{m,c}\left(Q^{(m)}_i\right),
+    \]
+    where the learning rate $\nu$ (shrinkage) scales each correction, as in standard gradient boosting.
+
+    \item \textbf{Class prediction.} Start from $F^{(0)}$; for each stage, apply stored $G^{(m)}$ to a new $x$ to get $q$, add $\nu \, h_{m,c}(q)$ to each class logit, then apply the softmax to obtain probabilities and choose the class with the maximum value.
+\end{itemize}
+
+\begin{algorithm}[h!]
+\caption{LdaBoost (multiclass)}
+\KwIn{Training data $(\bx_i,y_i)_{i=1}^N$, classes $\{1,\dots,C\}$, rounds $M$, learning rate $\nu$}
+\KwOut{Additive logits $F^{(M)}$ and per-round projections $\{G^{(m)}\}_{m=0}^{M-1}$}
+
+\textbf{Init:} One-hot $Y\in\{0,1\}^{N\times C}$, priors $\hat\pi_c$, $F^{(0)}_{i,c}\gets \log\hat\pi_c$,
+$P^{(0)}=\mathrm{softmax}(F^{(0)})$. Fit $G^{(0)}$ via LDA on $(X,Y)$; set $Q^{(0)}=X G^{(0)}$.
+
+\For{$m=1$ \KwTo $M$}{
+  $R^{(m)} \gets Y - P^{(m-1)}$ \tcp*{negative gradients of multinomial deviance}
+  Refit $G^{(m)}$ via LDA using provisional labels $\arg\max_c R^{(m)}_{\cdot,c}$;\\
+  $Q^{(m)} \gets X G^{(m)}$;\\
+  \For{$c=1$ \KwTo $C$}{
+    Fit regression tree $h_c^{(m)}: Q^{(m)}\to R^{(m)}_{\cdot,c}$;
+  }
+  $F^{(m)}_{\cdot,c} \gets F^{(m-1)}_{\cdot,c} + \nu\, h_c^{(m)}(Q^{(m)})$ for all $c$;\\
+  $P^{(m)}\gets \mathrm{softmax}(F^{(m)})$.
+}
+\textbf{Predict:} Apply $\{G^{(m)}\}$ and $\{h_c^{(m)}\}$ sequentially to a new $\bx$; return $\arg\max_c F^{(M)}_c$.
+\end{algorithm}
+
+
+\section{Dataset and Empirical Strategy}
+From an empirical perspective, the methodology can be summarized as follows:
+
+\begin{itemize}
+    \item \textbf{Step 1.} The features were normalized to have values in the range $[0,1]$.
+
+    \item \textbf{Step 2.} Features were extracted using the PCA (principal components) and LDA (discriminant components) algorithms to reduce dimensionality.  
+    For situations where both training and test sets are available, both datasets were transformed using PCA and LDA.  
+    For the test set, the principal and discriminant scores were calculated using the training weights.
+
+    \item \textbf{Step 3.} The classification process for each dataset was carried out using GBM-based classification on:
+    \begin{itemize}
+        \item normalized original features,
+        \item PCA-based features (\textbf{PCA+GBM}),
+        \item LDA-based features (\textbf{LDA+GBM}).
+    \end{itemize}
+
+    \item \textbf{Step 4.} The proposed \textbf{LdaBoost} model was also fitted for each dataset.
+\end{itemize}
+
+
+\subsection*{Datasets}
+The Human Activity Recognition Using Smartphones dataset (UCI Machine Learning Repository). The dataset has 6 balanced class labels representing the following conditions: 1 WALKING, 2 WALKING\_UPSTAIRS, 3 WALKING\_DOWNSTAIRS, 4 SITTING, 5 STANDING, 6 LAYING.
+
+The dataset contains 10,299 observations and 561 features recorded from a waist-mounted smartphone with inertial sensors. The data from the UCI Machine Learning Repository are already normalized and bounded within [-1, 1]. Data were split into training and test sets. Both test accuracy and cross-validated accuracy were evaluated.
+
+Iris dataset (UCI Machine Learning Repository). The dataset consists of 50 samples from each of three species of Iris (Iris setosa, Iris virginica, and Iris versicolor). Four features were measured from each sample: the length and the width of the sepals and petals, in centimetres. Features were normalized. Data were not split, and the cross-validated accuracy was evaluated.
+
+Sonar dataset (UCI Machine Learning Repository). The data contain patterns obtained by bouncing sonar signals off a metal cylinder at various angles and under various conditions. Each pattern is a set of numbers in the range 0.0 to 1.0. Each number represents the energy within a particular frequency band, integrated over a certain period of time. The label associated with each record is “R" if the object is a rock and "M" if it is a mine (metal cylinder). The data have 60 features and 208 observations. Features are already normalized. Data were not split, and the cross-validated accuracy was evaluated.
+
+Yeast dataset (Kaggle Repository). The Yeast dataset consists of a protein-protein interaction network. The target has 10 unbalanced classes, indicating the localization site of the protein (e.g., cytosolic or cytoskeletal, nuclear, extracellular, etc.). The data contain 8 features and 1,484 observations. Features were normalized. Data were not split, and the cross-validated accuracy was evaluated.
+
+Rainfall Dataset (Kaggle Repository). This dataset collects a time series of 2,919 observations (days) regarding weather conditions, meteorological variables, and rainfall. The target (rainfall) is binary, and there are 11 features summarizing atmospheric conditions (humidity, sunshine, wind direction, wind speed, etc.). Features were normalized. Data were split, and both test accuracy and cross-validated accuracy were evaluated.
+
+
+
+\subsection*{Tuning strategy}
+Firstly, using normalized inputs, we fit a classical GBM with \texttt{GradientBoostingClassifier} tuning parameters using 10-fold cross-validation. In particular, we tune \texttt{max\_depth}, \texttt{n\_estimators}, and \texttt{min\_samples\_leaf}, fixing \texttt{learning\_rate} at 0.05 and the number of observations for each stochastic gradient descent iteration (\texttt{subsample}) at 0.6.
+
+Secondly, to assess how the performance of different algorithms depends only on the utilized features, the best-tuned parameters of GBM were also used for PCA+GBM, LDA+GBM, and LdaBoost. Specifically, for PCA+GBM, we also tune the optimal number of principal components (maximizing the cross-validated accuracy), whereas for both LDA+GBM and LdaBoost, we retain the maximum number of discriminant scores (\#classes$-1$).
+
+Thirdly, only for LdaBoost do we refit the algorithm (\texttt{LdaBoost\_tuned}), this time also tuning the parameters — \texttt{max\_depth}, \texttt{n\_estimators}, and \texttt{min\_samples\_leaf} — which were previously fixed to match the GBM estimates for ease of comparison. This allows us to assess whether LdaBoost's accuracy benefits from full and unconstrained parameter tuning.
+
+For each dataset, algorithms were compared using 10-fold cross-validated accuracy, and for the HAR and Rainfall datasets, also by test accuracy. For the HAR dataset, we also evaluate the macro F1 score as a measure for a more complete assessment.
+
+
+\subsection*{LdaBoost Simulations}
+To comprehensively evaluate the robustness and performance of the proposed LdaBoost algorithm, we conducted a series of simulations to explore how classification accuracy varied across different scenarios. Specifically, we systematically assessed the influence of two critical factors: the number of features and the degree of correlation among these features.
+
+In these simulations, synthetic datasets of 1000 observations were generated using a multivariate normal distribution, $X \sim \mathcal{N}(\mu_y, \Sigma)$, with mean vectors $\mu_y$ set distinctly for each class and type of target (see below). The covariance matrix $\Sigma$ was generated using a symmetric structure with diagonal elements equal to 1, and off-diagonal elements sampled from a truncated normal distribution with a mean of 0.5 and a standard deviation of 1, ensuring correlations within a realistic range between -1 and 1.
+
+Particularly, the mean correlation ($\rho$) of non-diagonal elements of $\Sigma$ was considered, and four values were simulated for $\rho$: 0, 0.2, 0.5, and 0.7.
+
+\textbf{To construct the target variable $Y$, two distinct scenarios were considered:}
+
+\begin{itemize}
+    \item \textbf{Binary scenario:} Two distinct class-specific mean vectors, $\mu_0=0$ and $\mu_1=1$, were established. Observations were generated as follows:
+    \[
+    X|Y=0 \sim \mathcal{N}(\mu_0,\Sigma), \quad X|Y=1 \sim \mathcal{N}(\mu_1,\Sigma)
+    \]
+    The class labels were determined based on which Gaussian distribution each observation originated from.
+    
+    \item \textbf{Multiclass scenario:} Multiple distinct mean vectors $\mu_k = k$ were carefully defined to maximize nonlinear separability. Observations were generated as:
+    \[
+    X|Y=k \sim \mathcal{N}(\mu_k,\Sigma), \quad k = 1,2,\dots,K
+    \]
+    Each observation's class label was directly assigned according to the Gaussian distribution from which it was drawn.
+\end{itemize}
+
+These simulated distributions provide a moderate to high class overlapping in the feature space, thus avoiding linear separability or clear class separation. Moreover, the use of normal likelihoods makes the Bayes classifier — based on Bayes' Theorem — computationally feasible. The Bayes classifier (assuming equal priors) was fitted to each simulated dataset, and its resulting accuracy — representing the theoretical upper bound or ideal performance achievable — was used as a benchmark when evaluating LdaBoost simulations.
+
+The number of features was systematically varied at distinct levels (20, 50, 100, 200, and 400) to represent scenarios ranging from low to high dimensionality. Additionally, correlation levels among features were manipulated through the covariance matrix, simulating conditions ranging from weak to strong correlations. These methodological choices allowed a thorough investigation into how dimensionality and feature correlation structures influence the performance of LdaBoost.
+
+Furthermore, a detailed comparative analysis was conducted to evaluate how LdaBoost’s classification accuracy varied across different combinations of feature count and correlation strength, as well as how closely it approached the accuracy of the Bayes classifier. This comparative evaluation provided insights into the adaptability and potential performance advantages of LdaBoost relative to classical GBM approaches under diverse dataset conditions.
+
+\section*{Results}
+\subsection*{HAR}
+In the HAR dataset (Table~\ref{tab:classification_results}), based on cross-validated accuracy, GBM performs well (0.958), but its accuracy is slightly lower than that of LDA+GBM (0.960) and notably lower than LdaBoost (0.978). This result is especially striking given that the latter two methods use only 5 features out of the original 561. Instead, as expected, PCA+GBM achieves the lowest performance (0.906).
+
+When analyzing the test set, both LDA+GBM and LdaBoost (with its own parameter tuning) perform well, outperforming GBM.
+
+Luštrek and Kaluža \citep{luvstrek2009fall} assess eight algorithms (C4.5 decision trees, RIPPER decision rules, Naive Bayes, 3-Nearest Neighbors, Support Vector Machine (SVM), Random Forest, Bagging, and Adaboost M1 boosting) and found that the highest cross-validated classification accuracy is achieved by Support Vector Machine (0.977) and Adaboost (0.977). In the end, LdaBoost (0.978) and its best-tuned version \texttt{LdaBoost\_tuned} (0.980) achieved the highest cross-validated accuracy, whereas GBM performed worse than other classifiers (0.958).
+
+To complete the picture, in terms of F1 score (average across ten folds), different classifiers present the following results: GBM (F1 = 0.958, SD = 0.031), PCA+GBM (F1 = 0.906, SD = 0.032), LDA+GBM (F1 = 0.959, SD = 0.028), and LdaBoost (F1 = 0.979, SD = 0.004).
+
+
+\subsection*{Other datasets}
+
+Table~\ref{tab:classification_results} provides a comprehensive overview of the classification accuracy of the various analyzed approaches across multiple datasets. The results clearly indicate that LdaBoost and its best-tuned version, \texttt{LdaBoost\_tuned}, consistently achieve superior accuracy compared to GBM, especially in scenarios with multiclass targets such as the HAR and Yeast datasets.
+
+
+\begin{table}[h!]
+\centering
+\begingroup
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.0}
+\footnotesize
+\caption{Cross-validated accuracy (mean with SD in parentheses) and test accuracy where available.
+Best per row in \textbf{bold}.}
+\label{tab:classification_results}
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+\multicolumn{2}{c}{\textbf{Dataset}} & \textbf{GBM} & \textbf{PCA+GBM} & \textbf{LDA+GBM} & \textbf{\textsc{LdaBoost}} \\
+\midrule
+\multirow{5}{*}{\textbf{CV}} 
+  & IRIS      & 0.960 (0.044) & 0.933 (0.060) & \textbf{0.973 (0.053)} & 0.967 (0.054) \\
+  & YEAST     & 0.568 (0.037) & 0.504 (0.023) & 0.569 (0.035) & \textbf{0.589 (0.032)} \\
+  & HAR       & 0.958 (0.029) & 0.906 (0.029) & 0.960 (0.026) & \textbf{0.978 (0.004)} \\
+  & RAIN      & 0.861 (0.025) & 0.860 (0.019) & 0.856 (0.024) & \textbf{0.864 (0.025)} \\
+  & SONAR     & 0.694 (0.173) & 0.645 (0.132) & 0.625 (0.150) & \textbf{0.721 (0.075)} \\
+\midrule
+\multirow{2}{*}{\textbf{Test}} 
+  & HAR       & 0.940 & 0.881 & \textbf{0.954} & 0.948 [0.951] \\
+  & RAIN      & \textbf{0.868} & 0.849 &  0.838 & 0.852 [0.858] \\
+\bottomrule
+\end{tabular}
+\endgroup
+
+\medskip
+\raggedright\footnotesize
+\textit{Note:} Bracketed values are test accuracy for \textsc{LdaBoost\_tuned}. Macro-F1 for HAR is reported in the text.
+\end{table}
+
+
+\bigskip
+\noindent
+The Yeast dataset (8 features) showed substantial improvements, where accuracy increases from 0.537 for GBM to 0.573 with LdaBoost (LDA+GBM 0.569). This result confirms the findings on the HAR dataset (561 features), demonstrating the considerable advantage of integrating LDA features dynamically during boosting iterations, especially in the context of a multiclass target, independently of feature dimensionality.
+
+In contrast, with a small number of features, such as in the IRIS dataset, LDA+GBM (0.973) greatly outperformed PCA+GBM (0.933) and GBM (0.967), but the latter outperformed LdaBoost (0.960), demonstrating no clear advantage of the integrated approach.
+
+For the Sonar dataset, characterized by a binary target and relatively high dimensionality (60 features), performances were comparable between GBM (0.626) and LDA+GBM (0.625). However, both were substantially surpassed by LdaBoost (0.731), highlighting the particular strength of LdaBoost in scenarios with fewer classes but higher dimensional complexity. Similarly, for the Rainfall dataset (binary target, 11 features), results are quite similar to those of the IRIS dataset, where LDA+GBM (0.860) outperformed both GBM (0.853) and LdaBoost (0.817). In this case, with lower complexity, LdaBoost does not demonstrate substantial advantages over LDA preprocessing.
+
+Regarding test accuracy, in the HAR dataset, the tuned version of LdaBoost (0.953) and LDA+GBM (0.954) greatly outperform GBM (0.916), whereas in the Rainfall dataset, the differences are smaller, although the tuned LdaBoost version achieved the highest performance (0.858).
+
+These findings suggest that the benefits of LdaBoost become increasingly evident as the complexity of the classification task increases, particularly with respect to the number of classes, though not necessarily with feature dimensionality in multiclass settings. In contrast, for binary classification, the added value of LdaBoost tends to grow with higher feature dimensionality. These trends support the overall effectiveness and robustness of the integrated LDA-boosting approach across a range of data scenarios.
+
+\subsection*{Results of LdaBoost Simulations}
+Figures~\ref{fig:fig1} and~\ref{fig:fig2} illustrate the accuracy trends observed in our simulations for both multiclass and binary classification scenarios as the number of features varies, clearly highlighting the comparative performance advantages of LdaBoost over classical GBM. These figures underscore the capacity of LdaBoost to maintain robust predictive accuracy even as the feature dimensionality increases significantly, a challenge traditionally faced by many machine learning algorithms. Additionally, Figure~\ref{fig:fig3} provides further insight into how accuracy is influenced by varying correlation levels among features, emphasizing the nuanced relationship between feature correlation and classification performance within the context of LdaBoost.
+
+The simulation results clearly demonstrate that LdaBoost consistently outperformed GBM across varying numbers of features, particularly evident in scenarios with multiclass targets (Figures~\ref{fig:fig1}).
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/pipeline_confront_accuracy_three class_1k.pdf}
+    \caption{\textit{Accuracy for a multiclass target as a function of the number of features ($\rho\approx0.5$)}}
+    \label{fig:fig1}
+\end{figure}
+
+As the number of features increased, both LdaBoost and LDA+GBM consistently outperformed the standard GBM model, with particularly notable accuracy gains in the 50–100 feature range. This highlights the effectiveness of LDA-based feature extraction. Moreover, the performance gap between GBM and the two LDA-integrated methods remained relatively stable—widening further at 300 features—emphasizing the advantage of combining discriminant analysis with boosting in high-dimensional classification settings.
+
+A similar pattern emerged in the binary classification setting (Figure~\ref{fig:fig2}): although performance differences were less pronounced, LdaBoost continued to outperform GBM, especially at intermediate levels of feature dimensionality (around 50–100 features). However, as dimensionality increased further ($p > 270$), the accuracy of the two methods tended to converge.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/pipeline_confront_accuracy_binary_1k.pdf}
+    \caption{\textit{Accuracy for a binary target as a function of the number of features ($\rho\approx0.5$)}}
+    \label{fig:fig2}
+\end{figure}
+
+\newpage
+Notably, in both binary and multiclass settings, LDA+GBM closely mirrored the performance trajectory of LdaBoost. In the binary case, LdaBoost consistently outperformed LDA+GBM, particularly at moderate levels of feature dimensionality, suggesting that in more complex feature spaces, LDA-based feature extraction alone can significantly enhance the predictive power of boosting methods.
+
+To further dissect the performance dynamics of LdaBoost, we examined how accuracy varies under different correlation conditions among features and varying numbers of features. 
+
+Analyzing first only the (mean) feature correlation $\rho$, accuracy improved markedly as the mean correlation among features increased, with optimal performance (mean accuracy = 0.7) generally observed at moderate to high correlation levels ($\rho = 0.7$). This holds for any number of features. This high performance is greater than in other scenarios with low ($\rho = 0.2$) mean correlation (mean accuracy = 0.41) or no correlation (mean accuracy = 0.35), suggesting that the algorithm effectively leverages correlated features to enhance class separability.
+
+Figure~\ref{fig:fig3} illustrates how LdaBoost accuracy varies over both the number of features and $\rho$ in a binary classification task. Overall, the model achieves higher accuracy when the number of features is around 100, particularly under moderate to high correlation levels ($\rho \approx 0.3$ and $\rho \approx 0.7$), since it benefits from LDA extraction. As dimensionality increases beyond this range, performance tends to decline, especially for higher correlation settings, although it remains relatively stable at the largest dimensionalities. Interestingly, under no correlation ($\rho \approx 0.0$), accuracy improves steadily with more features, peaking around 300 before slightly decreasing. 
+
+\newpage
+These results suggest that LdaBoost benefits from moderate dimensionality when feature redundancy is present, likely due to LDA’s capacity to extract informative directions. In contrast, when features are uncorrelated, LdaBoost appears to leverage the increased dimensionality more effectively, although with diminishing returns at very high dimensions.
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/ldaboost_accuracy_binary_1k.pdf}
+    \caption{\textit{LdaBoost accuracy by number of features and average correlation levels ($\rho$): binary target. Points indicate the accuracy of the Bayes classifier.}}
+    \label{fig:fig3}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/ldaboost_accuracy_three class_1k.pdf}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/ldaboost_accuracy_multiclass_1k.pdf}
+    \caption{\textit{LdaBoost accuracy by number of features and average correlation levels ($\rho$): multiclass target (Upper 3 classes, Lower 5 classes). Points indicate the accuracy of the Bayes classifier.}}
+    \label{fig:fig4}
+\end{figure}
+
+\newpage
+Figure~\ref{fig:fig4} illustrates how accuracy varies for multiclass targets with 3 and 5 classes. The main finding is that, in all scenarios, accuracy is higher for binary targets and decreases as the number of classes increases. Moreover, as the number of covariates increases, the accuracies tend to converge to the same value regardless of the level of correlation, and this effect is more pronounced when the target variable has fewer classes.
+
+This may be a clear finding of the so-called Hughes phenomenon \citep{hughes1968mean,1968}, shown here for binary targets. The core idea is that as the number of features increases, the classification accuracy of statistical pattern recognizers does not necessarily improve—and may even decline or stabilize—especially when the number of training samples is limited. In fact, data become sparse in high dimensions, and the classifier has fewer observations per unit volume of the feature space to estimate class boundaries reliably. Hughes showed that there is an optimal number of features for a given sample size and classifier type. Beyond that point, adding more features does not improve and may harm classification accuracy.
+
+This effect is more pronounced when the features are highly correlated or when the sample size is low relative to the number of features. Figure~9 clearly illustrates both effects, especially the sharp decline in accuracy for high levels of feature correlation. Moreover, regarding the latter aspect, given that the sample size ($N$) is always fixed at 1000, for a large number of features ($p$), the ratio $N/p$ declines substantially. This Hughes phenomenon is less marked when the number of classes increases (Figure~\ref{fig:fig4}).
+
+\newpage
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/ldaboost_accuracy_multiclass_10k.pdf}
+    \caption{}
+    \label{fig:fig5}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/ldaboost_accuracy_binary_10k.pdf}
+    \caption{}
+    \label{fig:fig6}
+\end{figure}
+
+\section{Conclusion}
+To our knowledge, no prior study has investigated the use of LDA in conjunction with gradient boosting. Specifically, there is no established practice or empirical evidence suggesting that LDA enhances performance or is inherently compatible with gradient boosting models. Beyond analyzing the effects of PCA and LDA as feature extraction techniques on the accuracy of gradient boosting machines (GBMs), we propose an integrated, iterative algorithm—LdaBoost—that applies LDA-based feature transformation at each boosting iteration.
+
+Empirically, we compare the classification performance of standard GBM with PCA, GBM with LDA preprocessing, and the proposed LdaBoost algorithm across five benchmark datasets. These datasets were selected to represent a range of conditions in terms of number of observations, number of features, and target variable type (binary or categorical). In all cases, LdaBoost or GBM with LDA preprocessing outperformed standard GBM in terms of both cross-validated and test accuracy.
+
+Overall, the results show that LdaBoost yields increasing performance gains as classification tasks become more complex in terms of the number of target classes. This pattern is less pronounced, however, when increasing the number of features in multiclass settings. Conversely, in binary classification tasks, LdaBoost exhibits a clear advantage as feature dimensionality increases. These findings highlight the adaptability and robustness of the LDA-boosting framework across a variety of data structures.
+
+Simulation studies further examine LdaBoost’s behavior under varying levels of feature dimensionality and inter-feature correlation. The results indicate improved accuracy in binary classification under moderate feature complexity and high feature correlation, and also clearly reveal the presence of the Hughes phenomenon (curse of dimensionality).
+
+Together, these insights underscore LdaBoost’s robust adaptability to different data conditions, demonstrating its practical utility across diverse classification scenarios—particularly in settings characterized by high dimensionality and substantial feature correlation.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
