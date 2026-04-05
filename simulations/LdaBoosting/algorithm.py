@@ -24,6 +24,7 @@ class LdaBoost:
         self.lda_transforms = []     # Lista per salvare le trasformazioni LDA ad ogni iterazione
         self.initial_logit = None    # Logit iniziale basato sulle probabilità a priori
         self.classes_ = None         # Classi uniche presenti nel target
+        self.lda_fallback_rounds = 0 # Numero di round in cui il fit LDA usa fallback
 
     def softmax(self, F):
         """
@@ -32,11 +33,38 @@ class LdaBoost:
         """
         expF = np.exp(F - np.max(F, axis=1, keepdims=True))
         return expF / np.sum(expF, axis=1, keepdims=True)
+
+    def _fit_lda_with_fallback(self, X, labels, fallback_lda=None):
+        """
+        Esegue il fit LDA sulle etichette fornite; se non possibile,
+        riusa la trasformazione fallback per mantenere definito il round.
+        """
+        if np.unique(labels).size < 2:
+            if fallback_lda is None:
+                raise ValueError("LDA requires at least two classes in labels.")
+            self.lda_fallback_rounds += 1
+            return fallback_lda, fallback_lda.transform(X)
+
+        lda = LinearDiscriminantAnalysis(n_components=None)
+        try:
+            X_lda = lda.fit_transform(X, labels)
+            return lda, X_lda
+        except ValueError:
+            if fallback_lda is None:
+                raise
+            self.lda_fallback_rounds += 1
+            return fallback_lda, fallback_lda.transform(X)
     
     def fit(self, X, y):
         """
         Allena il modello sui dati X e sul target politomico y.
         """
+        self.estimators = []
+        self.lda_transforms = []
+        self.initial_logit = None
+        self.classes_ = None
+        self.lda_fallback_rounds = 0
+
         n_samples = X.shape[0]
         self.classes_ = np.unique(y)
         n_classes = len(self.classes_)
@@ -55,17 +83,20 @@ class LdaBoost:
         for m in range(self.n_estimators):
             if m == 0:
                 # Prima iterazione: LDA con target originale (multiclasse)
-                lda = LinearDiscriminantAnalysis(n_components=None)
-                X_lda = lda.fit_transform(X, y)
+                lda, X_lda = self._fit_lda_with_fallback(X, y, fallback_lda=None)
             else:
                 # Calcola le probabilità attuali tramite softmax
                 p = self.softmax(F)
                 # Pseudo-residui: differenza tra codifica one-hot e probabilità attuali
                 residuals = one_hot_y - p  # shape (n_samples, n_classes)
                 # Per usare LDA: definiamo per ogni campione l'etichetta del residuo maggiore
+                # np.argmax gestisce i pareggi in modo deterministico (primo indice massimo).
                 labels = np.argmax(residuals, axis=1)
-                lda = LinearDiscriminantAnalysis(n_components=None)
-                X_lda = lda.fit_transform(X, labels)
+                lda, X_lda = self._fit_lda_with_fallback(
+                    X,
+                    labels,
+                    fallback_lda=self.lda_transforms[-1],
+                )
             
             # Salva la trasformazione LDA corrente
             self.lda_transforms.append(lda)

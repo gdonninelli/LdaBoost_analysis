@@ -31,14 +31,39 @@ class LdaBoost:
         self.lda_transforms = []  # LDA transformers per iteration
         self.initial_logit = None
         self.classes_ = None
+        self.lda_fallback_rounds = 0
 
     def softmax(self, F):
         """Row-wise softmax of logits F (n_samples, n_classes)."""
         expF = np.exp(F - np.max(F, axis=1, keepdims=True))
         return expF / np.sum(expF, axis=1, keepdims=True)
 
+    def _fit_lda_with_fallback(self, X, labels, fallback_lda=None):
+        """Fit LDA on labels; if impossible, reuse fallback transform."""
+        if np.unique(labels).size < 2:
+            if fallback_lda is None:
+                raise ValueError("LDA requires at least two classes in labels.")
+            self.lda_fallback_rounds += 1
+            return fallback_lda, fallback_lda.transform(X)
+
+        lda = LinearDiscriminantAnalysis(n_components=None)
+        try:
+            X_lda = lda.fit_transform(X, labels)
+            return lda, X_lda
+        except ValueError:
+            if fallback_lda is None:
+                raise
+            self.lda_fallback_rounds += 1
+            return fallback_lda, fallback_lda.transform(X)
+
     def fit(self, X, y):
         """Fit the model on features X and multiclass target y."""
+        self.estimators = []
+        self.lda_transforms = []
+        self.initial_logit = None
+        self.classes_ = None
+        self.lda_fallback_rounds = 0
+
         n_samples = X.shape[0]
         self.classes_ = np.unique(y)
         n_classes = len(self.classes_)
@@ -53,14 +78,17 @@ class LdaBoost:
 
         for m in range(self.n_estimators):
             if m == 0:
-                lda = LinearDiscriminantAnalysis(n_components=None)
-                X_lda = lda.fit_transform(X, y)
+                lda, X_lda = self._fit_lda_with_fallback(X, y, fallback_lda=None)
             else:
                 p = self.softmax(F)
                 residuals = one_hot_y - p
+                # np.argmax is deterministic in ties: first max index is selected.
                 labels = np.argmax(residuals, axis=1)
-                lda = LinearDiscriminantAnalysis(n_components=None)
-                X_lda = lda.fit_transform(X, labels)
+                lda, X_lda = self._fit_lda_with_fallback(
+                    X,
+                    labels,
+                    fallback_lda=self.lda_transforms[-1],
+                )
 
             self.lda_transforms.append(lda)
 
