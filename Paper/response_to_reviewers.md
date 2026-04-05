@@ -106,6 +106,88 @@ This document maps each comment in ReviewComments.md to concrete revisions made 
 **Locations:**
 - Paper/main.tex (Comparative performance subsection)
 
+## Additional Committee Points (Current Status)
+
+### 1) Asymmetry in tuning strategy across methods
+**Status:** addressed in manuscript discussion.
+
+**Implemented:** added explicit clarification that fixed-parameter comparisons were designed as transformation-focused contrasts, not fully optimized head-to-head rankings, and that this introduces asymmetry because GBM-tuned parameters are reused in transformed spaces.
+
+**Locations:**
+- Paper/main.tex (Tuning strategy subsection)
+
+---
+
+### 2) PCA components tuned while LDA fixed at $C-1$
+**Status:** addressed as explicit methodological choice plus limitation.
+
+**Implemented:** clarified that retaining $C-1$ follows Fisher-LDA construction, but acknowledged this as a comparison asymmetry and identified reduced-LDA-component ablation as relevant future work.
+
+**Locations:**
+- Paper/main.tex (Tuning strategy subsection)
+
+---
+
+### 3) Missing formal statistical significance tests
+**Status:** addressed as explicit limitation.
+
+**Implemented:** added statement that reported cross-validated means/SD are descriptive and that fold-wise paired significance tests were not conducted, so inferential claims should be interpreted cautiously.
+
+**Locations:**
+- Paper/main.tex (Tuning strategy subsection)
+
+---
+
+### 4) Computational overhead and scalability
+**Status:** already addressed.
+
+**Implemented:** symbolic complexity comparison + runtime-ablation table and reproducible outputs.
+
+**Locations:**
+- Paper/main.tex (Computational scalability and runtime-ablation evidence subsections)
+- simulations/runtime_ablation.py
+- simulations/output_pipeline_confront/runtime_ablation_summary.csv
+
+---
+
+### 5) Binary case ($C=2$) and one-component LDA constraint
+**Status:** addressed with dedicated interpretation.
+
+**Implemented:** added discussion that binary LDA yields one component per round and clarified that LdaBoost competitiveness comes from iterative direction updates across rounds; also noted stronger conceptual motivation in multiclass settings.
+
+**Locations:**
+- Paper/main.tex (Comparative performance of different pipelines: simulations subsection)
+
+---
+
+### 6) Positioning versus boosting-variant literature
+**Status:** addressed with positioning paragraph.
+
+**Implemented:** added a conceptual comparison to boosting variants that modify margins/filtering/projection geometry (including LPBoost and FilterBoost style families), highlighting that LdaBoost differs by recomputing supervised projections inside each boosting stage.
+
+**Locations:**
+- Paper/main.tex (Introduction)
+
+---
+
+### 7) Gaussian simulation design favors LDA
+**Status:** addressed as explicit limitation.
+
+**Implemented:** added a limitation statement that Gaussian class-mean simulations may favor LDA and may not fully transfer to non-Gaussian/mixed/nonlinear regimes; non-Gaussian simulation extension identified as future work.
+
+**Locations:**
+- Paper/main.tex (LdaBoost Simulations subsection)
+
+---
+
+### 8) HAR case where baseline GBM is stronger in CV
+**Status:** addressed with focused failure-mode interpretation.
+
+**Implemented:** expanded HAR discussion to explain why reducing 561 signals to $C-1=5$ discriminant components can lose nonlinear interaction information that trees exploit in the original feature space.
+
+**Locations:**
+- Paper/main.tex (HAR subsection in Results)
+
 ## Validation performed
 - LaTeX build successful after revisions:
   - Paper/main.tex compiled to Paper/main.pdf
