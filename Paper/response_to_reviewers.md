@@ -129,9 +129,21 @@ This document maps each comment in ReviewComments.md to concrete revisions made 
 ---
 
 ### 3) Missing formal statistical significance tests
-**Status:** addressed as explicit limitation.
+**Status:** partially addressed with explicit simulation-based tests; real-data fold-wise inferential testing remains a limitation.
 
-**Implemented:** added statement that reported cross-validated means/SD are descriptive and that fold-wise paired significance tests were not conducted, so inferential claims should be interpreted cautiously.
+**Implemented:**
+- Added nonparametric significance checks on the simulation pipeline-comparison outputs (binary/ternary/quinary, $N=1{,}000$):
+  - Friedman across three pipelines on matched replicate-setting blocks ($n=25$ per scenario):
+    - binary: $p=0.302$
+    - ternary: $p=0.073$
+    - quinary: $p=0.338$
+  - Pairwise Wilcoxon signed-rank tests on the same matched blocks, with Holm correction across pairwise contrasts; no pairwise comparison remained significant at $\alpha=0.05$ after correction.
+- Added explicit real-dataset context (sample sizes and fold counts) in the manuscript: 10-fold CV for HAR/IRIS/SONAR/Rainfall, 5-fold CV for YEAST; sample sizes are HAR train $n=7{,}352$ (+ external test $n=2{,}947$), IRIS $n=150$, SONAR $n=208$, Rainfall train $n=2{,}190$ (+ external test $n=730$), and YEAST $n=1{,}484$.
+- Clarified scope: these real-data fold/sample settings are now explicit, but fold-wise paired score vectors were not archived as a single unified artifact for all real datasets; therefore, fully paired inferential testing on all real datasets remains future work.
+- Added manuscript text to report these tests as robustness diagnostics alongside descriptive mean/SD reporting.
+- Exported reproducible significance-test outputs:
+  - simulations/output_pipeline_confront/pipeline_confront_significance_tests.csv
+  - simulations/output_pipeline_confront/pipeline_confront_significance_tests.json
 
 **Locations:**
 - Paper/main.tex (Tuning strategy subsection)
