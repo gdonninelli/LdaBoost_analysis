@@ -29,6 +29,16 @@ This document maps each comment in ReviewComments.md to concrete revisions made 
 - Added empirical runtime-ablation results section and table (5 fixed seeds).
 - Added reproducible benchmark script and output artifacts.
 
+**Ablation protocol (why, how, data):**
+- Why this ablation: to directly address the committee concern on computational burden by pairing the symbolic complexity argument with measured wall-clock evidence.
+- How it was conducted: two synthetic scenarios were generated and, for each scenario, the same train/test protocol (stratified split, test size 0.25) was repeated over fixed seeds (11, 29, 47, 71, 89).
+- Models compared in each run: GBM, PCA+GBM, LDA+GBM (one-shot transform), and LdaBoost (dynamic per-round LDA).
+- Metrics recorded: fit time, predict time, total time, and test accuracy; results were aggregated as mean and standard deviation.
+- Data used: balanced correlated Gaussian synthetic datasets with $\rho=0.5$ in two settings:
+  - binary high-dimensional: $N=1200$, $p=300$, $C=2$
+  - multiclass moderate-dimensional: $N=1200$, $p=100$, $C=5$
+- Scope note: this ablation is a runtime-context experiment with fixed hyperparameters; accuracy values are reported as comparative context, not as tuned performance ceilings.
+
 **Locations:**
 - Paper/main.tex (Computational scalability subsection)
 - Paper/main.tex (Runtime-ablation evidence subsection and Table runtime_ablation)
