@@ -621,6 +621,9 @@ def main() -> None:
             )
 
     print("\n=== Holdout test evaluation (HAR, RAINFALL) ===")
+    holdout_start_perf = time.perf_counter()
+    holdout_start_abs = now_utc_iso()
+    print(f"[HOLDOUT] start: {holdout_start_abs}")
     holdout_loaders = {
         "HAR": load_har_train_test,
         "RAINFALL": load_rainfall_train_test,
@@ -637,6 +640,8 @@ def main() -> None:
         for method_name in selected_methods:
             eval_label = f"{dataset_name} holdout | {method_name}"
             t0 = time.perf_counter()
+            method_start_abs = now_utc_iso()
+            print(f"[{eval_label}] validation accuracy computation start: {method_start_abs}")
 
             best_model, best_params, best_inner_score = tune_method(
                 method_name=method_name,
@@ -654,7 +659,10 @@ def main() -> None:
             y_hat = best_model.predict(x_test)
             test_acc = float(accuracy_score(y_test, y_hat))
             elapsed = time.perf_counter() - t0
-            print(f"[{eval_label}] test accuracy: {test_acc:.6f}")
+            print(
+                f"[{eval_label}] test accuracy: {test_acc:.6f} "
+                f"| elapsed {format_elapsed(elapsed)}"
+            )
 
             holdout_test_rows.append(
                 {
@@ -669,6 +677,13 @@ def main() -> None:
                     "best_params": json.dumps(best_params, sort_keys=True),
                 }
             )
+
+    holdout_end_perf = time.perf_counter()
+    holdout_end_abs = now_utc_iso()
+    print(
+        f"[HOLDOUT] end: {holdout_end_abs} "
+        f"| elapsed {format_elapsed(holdout_end_perf - holdout_start_perf)}"
+    )
 
     fold_json_path = output_dir / "point1_retune_fold_accuracies.json"
     summary_csv_path = output_dir / "point1_retune_fold_accuracy_summary.csv"
