@@ -4,6 +4,8 @@ This report tracks Point 1 retuning results for different inner/outer split conf
 
 ## Run R1 (completed)
 
+Due to the high computational burden of nested grid-search tuning (in particular on HAR), this phase was run with a reduced nested validation setup: 3 inner folds and 3 outer folds. This preserves a cross-validated comparison while keeping runtime manageable.
+
 - Outer splits: 3
 - Inner splits: 3
 - Methods: PCA+GBM, LDA+GBM
@@ -19,15 +21,17 @@ Source files:
 - `point1_retune_best_params.csv`
 - `point1_retune_fold_timing.csv`
 
-### Accuracy summary (mean +/- std over outer folds)
+### Accuracy summary and comparison with manuscript baselines
 
-| Dataset | PCA+GBM | LDA+GBM |
-|---|---:|---:|
-| HAR | 0.9456 +/- 0.0094 | 0.9791 +/- 0.0036 |
-| RAINFALL | 0.8626 +/- 0.0152 | 0.8603 +/- 0.0207 |
-| IRIS | 0.9667 +/- 0.0306 | 0.9800 +/- 0.0200 |
-| SONAR | 0.7645 +/- 0.0158 | 0.6878 +/- 0.0518 |
-| YEAST | 0.5822 +/- 0.0232 | 0.6139 +/- 0.0296 |
+R1 values are from this run (outer=3, inner=3). GBM and LdaBoost reference values are from Table 1 in `Paper/main.tex` (cross-validated accuracy).
+
+| Dataset | GBM (main.tex) | PCA+GBM (R1) | LDA+GBM (R1) | LdaBoost (main.tex) |
+|---|---:|---:|---:|---:|
+| HAR | 0.995 | 0.9456 +/- 0.0094 | 0.9791 +/- 0.0036 | 0.978 |
+| RAINFALL | 0.861 | 0.8626 +/- 0.0152 | 0.8603 +/- 0.0207 | 0.864 |
+| IRIS | 0.960 | 0.9667 +/- 0.0306 | 0.9800 +/- 0.0200 | 0.967 |
+| SONAR | 0.694 | 0.7645 +/- 0.0158 | 0.6878 +/- 0.0518 | 0.721 |
+| YEAST | 0.568 | 0.5822 +/- 0.0232 | 0.6139 +/- 0.0296 | 0.589 |
 
 ### Most frequent selected learning rate (across folds)
 
@@ -56,3 +60,67 @@ Add future runs below to compare split settings:
 | Run ID | Outer splits | Inner splits | Methods | Total elapsed | Notes |
 |---|---:|---:|---|---|---|
 | R1 | 3 | 3 | PCA+GBM, LDA+GBM | 00:31:06 | Baseline commit |
+| R2 | 3 | 3 | PCA+GBM, LDA+GBM | 14:32:36 | Full grid-search completed |
+
+## Run R2 (completed)
+
+- Outer splits: 3
+- Inner splits: 3
+- Methods: PCA+GBM, LDA+GBM
+- Scope: full
+- Learning-rate grid: 0.03, 0.05, 0.07, 0.10
+- n_estimators grid: 100, 200, 300
+- max_depth grid: 2, 3, 4
+- min_samples_leaf grid: 1, 5, 10
+- Seed: 42
+- n_jobs: 8
+- Total elapsed: 14:32:36
+
+Command used/planned:
+
+```bash
+cd "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis" && /Users/giuliodonninelli/.local/share/virtualenvs/remarkable-substack-D7zpFFy-/bin/python real_datasets/run_point1_retuning.py --methods PCA+GBM,LDA+GBM --scope full --outer-splits 3 --inner-splits 3 --learning-rates 0.03,0.05,0.07,0.10 --full-n-estimators 100,200,300 --full-max-depth 2,3,4 --full-min-samples-leaf 1,5,10 --n-jobs 8
+```
+
+### Accuracy summary and comparison with manuscript baselines
+
+| Dataset | GBM (main.tex) | PCA+GBM (R2) | LDA+GBM (R2) | LdaBoost (main.tex) |
+|---|---:|---:|---:|---:|
+| HAR | 0.995 | 0.9678 +/- 0.0075 | 0.9791 +/- 0.0051 | 0.978 |
+| RAINFALL | 0.861 | 0.8616 +/- 0.0202 | 0.8630 +/- 0.0151 | 0.864 |
+| IRIS | 0.960 | 0.9800 +/- 0.0200 | 0.9800 +/- 0.0200 | 0.967 |
+| SONAR | 0.694 | 0.7885 +/- 0.0076 | 0.6879 +/- 0.0700 | 0.721 |
+| YEAST | 0.568 | 0.5815 +/- 0.0226 | 0.6112 +/- 0.0348 | 0.589 |
+
+### Most frequent selected hyperparameters in R2 (across folds)
+
+| Dataset | Method | n_estimators | max_depth | min_samples_leaf | learning_rate |
+|---|---|---:|---:|---:|---:|
+| HAR | PCA+GBM | 300 | 4 | 5 | 0.10 |
+| HAR | LDA+GBM | 100 | 4 | 5 | 0.07 |
+| RAINFALL | PCA+GBM | 100 | 2 | 5 | 0.03 |
+| RAINFALL | LDA+GBM | 100 | 2 | 5 | 0.03 |
+| IRIS | PCA+GBM | 300 | 2 | 10 | 0.05 |
+| IRIS | LDA+GBM | 100 | 2 | 1 | 0.03 |
+| SONAR | PCA+GBM | 200 | 4 | 10 | 0.10 |
+| SONAR | LDA+GBM | 100 | 2 | 1 | 0.03 |
+| YEAST | PCA+GBM | 100 | 4 | 5 | 0.03 |
+| YEAST | LDA+GBM | 100 | 2 | 1 | 0.03 |
+
+### Mean fold runtime by dataset in R2
+
+| Dataset | Mean fold time |
+|---|---:|
+| HAR | 04:46:57 |
+| RAINFALL | 00:00:24 |
+| IRIS | 00:00:17 |
+| SONAR | 00:00:10 |
+| YEAST | 00:03:04 |
+
+
+---
+(R3)
+
+```bash
+/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis" && /Users/giuliodonninelli/.local/share/virtualenvs/remarkable-substack-D7zpFFy-/bin/python real_datasets/run_point1_retuning.py --methods GBM, LdaBoost --scope full --outer-splits 3 --inner-splits 3 --learning-rates 0.03,0.05,0.07,0.10  --n-jobs 8
+```
