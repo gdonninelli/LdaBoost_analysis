@@ -118,8 +118,8 @@ cd "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoo
 | SONAR | 00:00:10 |
 | YEAST | 00:03:04 |
 
-
-## Run R3 (cross-validation completed, holdout pending)
+----
+# Run R3 (cross-validation completed, holdout pending)
 
 - Outer splits: 3
 - Inner splits: 3
@@ -155,12 +155,32 @@ Source files used for R3 status:
 
 ### Mean runtime by dataset and method (R3, per outer fold)
 
-| Dataset | LDA+GBM | PCA+GBM | LdaBoost |
-|---|---:|---:|---:|
-| HAR | 00:00:09 | 00:06:47 | 00:03:24 |
-| RAINFALL | 00:00:01 | 00:00:01 | 00:00:02 |
-| IRIS | 00:00:00 | 00:00:00 | 00:00:02 |
-| SONAR | 00:00:00 | 00:00:00 | 00:00:02 |
-| YEAST | 00:00:03 | 00:00:03 | 00:00:16 |
+| Dataset | LDA+GBM | PCA+GBM | LdaBoost | GBM |
+|---|---:|---:|---:|---:|
+| HAR | 00:00:09 | 00:06:47 | 00:03:24 | 00:07:09 |
+| RAINFALL | 00:00:01 | 00:00:01 | 00:00:02 | 00:00:00 |
+| IRIS | 00:00:00 | 00:00:00 | 00:00:02 | 00:00:00 |
+| SONAR | 00:00:00 | 00:00:00 | 00:00:02 | 00:00:00 |
+| YEAST | 00:00:03 | 00:00:03 | 00:00:16 | 00:00:02 |
+
+### Test validation accuracy table (R3, HAR and RAINFALL holdout)
+
+Holdout setup for this block:
+- HAR (official split): train size = 7352, test size = 2947, inner_splits = 3.
+- RAINFALL (train split fallback): train size = 1752, test size = 438, inner_splits = 3.
+
+| Dataset | GBM | LDA+GBM | PCA+GBM | LdaBoost |
+|---|---:|---:|---:|---:|
+| HAR | 0.9400 | 0.9528 | 0.9053 | 0.9511 |
+| RAINFALL | 0.8790 | 0.8607 | 0.8721 | 0.8584 |
+
+### Test validation timing table (R3)
+
+| Method | HAR Runtime (s) | RAINFALL Runtime (s) |
+|---|---:|---:|
+| GBM | 675.07 | 0.53 |
+| LDA+GBM | 10.25 | 0.27 |
+| PCA+GBM | 652.62 | 0.70 |
+| LdaBoost | 286.22 | 2.33 |
 
 From a computational perspective, the LDA-based approaches remain very competitive while keeping strong accuracy. One-shot LDA+GBM is generally the fastest option (and in HAR it is dramatically faster than PCA+GBM), while still delivering high predictive performance. At the same time, LdaBoost deserves a positive emphasis: despite its iterative LDA updates, it keeps a favorable speed-accuracy trade-off, remains substantially faster than PCA+GBM on massive dataset such as HAR, and preserves consistently strong predictive performance across datasets.

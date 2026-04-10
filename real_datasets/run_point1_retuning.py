@@ -32,7 +32,7 @@ from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import GridSearchCV, ParameterGrid, StratifiedKFold
+from sklearn.model_selection import GridSearchCV, ParameterGrid, StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
@@ -60,6 +60,7 @@ DATASET_CONFIGS: Dict[str, DatasetConfig] = {
 ALL_METHODS = ["GBM", "PCA+GBM", "LDA+GBM", "LdaBoost"]
 HEARTBEAT_SECONDS = 300
 HEARTBEAT_POLL_SECONDS = 5
+FALLBACK_HOLDOUT_TEST_SIZE = 0.2
 
 
 def now_utc_iso() -> str:
@@ -475,6 +476,9 @@ def persist_outputs(
     pd.DataFrame(fold_timing_rows).to_csv(fold_timing_csv_path, index=False)
     pd.DataFrame(holdout_test_rows).to_csv(holdout_csv_path, index=False)
 
+    holdout_candidates = ["HAR", "RAINFALL"]
+    selected_holdout_datasets = [d for d in holdout_candidates if d in selected_datasets]
+
     run_cfg = {
         "created_at": datetime.now(timezone.utc).isoformat(),
         "run_started_at": total_start_abs,
@@ -499,7 +503,7 @@ def persist_outputs(
         "seed": args.seed,
         "n_jobs": args.n_jobs,
         "gbm_subsample": 0.6,
-        "holdout_test_datasets": ["HAR", "RAINFALL"],
+        "holdout_test_datasets": selected_holdout_datasets,
         "note": "LdaBoost class does not expose subsample; only GBM-based pipelines fix subsample=0.6.",
     }
     with config_json_path.open("w", encoding="utf-8") as f:
@@ -712,23 +716,56 @@ def main() -> None:
         )
         print(f"[CHECKPOINT] wrote partial results after dataset {dataset_name}")
 
-    print("\n=== Holdout test evaluation (HAR, RAINFALL) ===")
-    holdout_start_perf = time.perf_counter()
-    holdout_start_abs = now_utc_iso()
-    print(f"[HOLDOUT] start: {holdout_start_abs}")
-    holdout_loaders = {
+    holdout_loaders_all = {
         "HAR": load_har_train_test,
         "RAINFALL": load_rainfall_train_test,
     }
-    for dataset_name, loader in holdout_loaders.items():
+    selected_holdout_datasets = [d for d in selected_datasets if d in holdout_loaders_all]
+
+    if selected_holdout_datasets:
+        holdout_label = ", ".join(selected_holdout_datasets)
+        print(f"\n=== Holdout test evaluation ({holdout_label}) ===")
+        holdout_start_perf = time.perf_counter()
+        holdout_start_abs = now_utc_iso()
+        print(f"[HOLDOUT] start: {holdout_start_abs}")
+    else:
+        holdout_start_perf = None
+        print("\n=== Holdout test evaluation skipped (no holdout-capable datasets selected) ===")
+
+    for dataset_name in selected_holdout_datasets:
+        loader = holdout_loaders_all[dataset_name]
         x_train, y_train_raw, x_test, y_test_raw = loader(PROJECT_ROOT / "real_datasets")
+        holdout_source = "official_test"
 
         if y_test_raw is None:
             print(
-                f"[HOLDOUT] skip {dataset_name}: test target column is missing; "
-                f"holdout test accuracy cannot be computed."
+                f"[HOLDOUT] {dataset_name}: test target column missing; "
+                f"creating external validation split from training data "
+                f"(test_size={FALLBACK_HOLDOUT_TEST_SIZE:.2f})."
             )
-            continue
+            y_train_raw_arr = np.asarray(y_train_raw)
+            stratify_labels = y_train_raw_arr if np.unique(y_train_raw_arr).size > 1 else None
+            try:
+                x_train, x_test, y_train_raw_arr, y_test_raw_arr = train_test_split(
+                    x_train,
+                    y_train_raw_arr,
+                    test_size=FALLBACK_HOLDOUT_TEST_SIZE,
+                    random_state=args.seed,
+                    stratify=stratify_labels,
+                )
+            except ValueError:
+                # Fallback without stratification for edge cases with very small class counts.
+                x_train, x_test, y_train_raw_arr, y_test_raw_arr = train_test_split(
+                    x_train,
+                    y_train_raw_arr,
+                    test_size=FALLBACK_HOLDOUT_TEST_SIZE,
+                    random_state=args.seed,
+                    stratify=None,
+                )
+
+            y_train_raw = y_train_raw_arr
+            y_test_raw = y_test_raw_arr
+            holdout_source = "train_split_fallback"
 
         encoder = LabelEncoder()
         encoder.fit(np.concatenate([y_train_raw, y_test_raw], axis=0))
@@ -766,6 +803,7 @@ def main() -> None:
             holdout_test_rows.append(
                 {
                     "dataset": dataset_name,
+                    "holdout_source": holdout_source,
                     "method": method_name,
                     "train_size": int(len(y_train)),
                     "test_size": int(len(y_test)),
@@ -777,12 +815,13 @@ def main() -> None:
                 }
             )
 
-    holdout_end_perf = time.perf_counter()
-    holdout_end_abs = now_utc_iso()
-    print(
-        f"[HOLDOUT] end: {holdout_end_abs} "
-        f"| elapsed {format_elapsed(holdout_end_perf - holdout_start_perf)}"
-    )
+    if holdout_start_perf is not None:
+        holdout_end_perf = time.perf_counter()
+        holdout_end_abs = now_utc_iso()
+        print(
+            f"[HOLDOUT] end: {holdout_end_abs} "
+            f"| elapsed {format_elapsed(holdout_end_perf - holdout_start_perf)}"
+        )
 
     total_end_perf = time.perf_counter()
     total_end_abs = now_utc_iso()
