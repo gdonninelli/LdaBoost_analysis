@@ -23,7 +23,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 import sys
 
 import numpy as np
@@ -139,27 +139,32 @@ def load_har_train_test(base: Path) -> Tuple[np.ndarray, np.ndarray, np.ndarray,
 
 
 def load_har(base: Path) -> Tuple[np.ndarray, np.ndarray]:
-    x_train, y_train, x_test, y_test = load_har_train_test(base)
-    x = np.concatenate([x_train, x_test], axis=0)
-    y = np.concatenate([y_train, y_test], axis=0)
-    return x, y
+    # Avoid leakage: for nested CV/tuning use only official training split.
+    x_train, y_train, _, _ = load_har_train_test(base)
+    return x_train, y_train
 
 
-def load_rainfall_train_test(base: Path) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def load_rainfall_train_test(base: Path) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Optional[np.ndarray]]:
     train = pd.read_csv(base / "rain" / "Data" / "train.csv")
     test = pd.read_csv(base / "rain" / "Data" / "test.csv")
     y_train = train["rainfall"].astype(int).to_numpy()
     x_train = ensure_numeric_features(train.drop(columns=["rainfall"]))
-    y_test = test["rainfall"].astype(int).to_numpy()
-    x_test = ensure_numeric_features(test.drop(columns=["rainfall"]))
+
+    # Some Rainfall test files are unlabeled (submission format): keep them usable.
+    if "rainfall" in test.columns:
+        y_test = test["rainfall"].astype(int).to_numpy()
+        x_test = ensure_numeric_features(test.drop(columns=["rainfall"]))
+    else:
+        y_test = None
+        x_test = ensure_numeric_features(test)
+
     return x_train, y_train, x_test, y_test
 
 
 def load_rainfall(base: Path) -> Tuple[np.ndarray, np.ndarray]:
-    x_train, y_train, x_test, y_test = load_rainfall_train_test(base)
-    x = np.concatenate([x_train, x_test], axis=0)
-    y = np.concatenate([y_train, y_test], axis=0)
-    return x, y
+    # Avoid leakage: for nested CV/tuning use only official training split.
+    x_train, y_train, _, _ = load_rainfall_train_test(base)
+    return x_train, y_train
 
 
 def load_iris(base: Path) -> Tuple[np.ndarray, np.ndarray]:
@@ -419,6 +424,88 @@ def tune_method(
     )
 
 
+def compute_summary_rows(fold_accuracies: Dict[str, Dict[str, List[float]]]) -> List[dict]:
+    rows: List[dict] = []
+    for dataset_name, method_map in fold_accuracies.items():
+        for method_name, accs in method_map.items():
+            if not accs:
+                continue
+            arr = np.array(accs, dtype=float)
+            rows.append(
+                {
+                    "dataset": dataset_name,
+                    "method": method_name,
+                    "mean_accuracy": float(np.mean(arr)),
+                    "std_accuracy": float(np.std(arr, ddof=1)) if len(arr) > 1 else 0.0,
+                    "n_folds": int(len(arr)),
+                }
+            )
+    return rows
+
+
+def persist_outputs(
+    output_dir: Path,
+    fold_accuracies: Dict[str, Dict[str, List[float]]],
+    best_params_rows: List[dict],
+    fold_timing_rows: List[dict],
+    holdout_test_rows: List[dict],
+    total_start_abs: str,
+    selected_datasets: List[str],
+    selected_methods: List[str],
+    args,
+    learning_rates: List[float],
+    completed_datasets: List[str],
+    run_stage: str,
+    run_finished_abs: Optional[str] = None,
+    total_elapsed: Optional[float] = None,
+) -> None:
+    fold_json_path = output_dir / "point1_retune_fold_accuracies.json"
+    summary_csv_path = output_dir / "point1_retune_fold_accuracy_summary.csv"
+    best_csv_path = output_dir / "point1_retune_best_params.csv"
+    fold_timing_csv_path = output_dir / "point1_retune_fold_timing.csv"
+    holdout_csv_path = output_dir / "point1_retune_holdout_test_accuracy.csv"
+    config_json_path = output_dir / "point1_retune_run_config.json"
+
+    with fold_json_path.open("w", encoding="utf-8") as f:
+        json.dump(fold_accuracies, f, indent=2)
+
+    summary_rows = compute_summary_rows(fold_accuracies)
+    pd.DataFrame(summary_rows).to_csv(summary_csv_path, index=False)
+    pd.DataFrame(best_params_rows).to_csv(best_csv_path, index=False)
+    pd.DataFrame(fold_timing_rows).to_csv(fold_timing_csv_path, index=False)
+    pd.DataFrame(holdout_test_rows).to_csv(holdout_csv_path, index=False)
+
+    run_cfg = {
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "run_started_at": total_start_abs,
+        "run_finished_at": run_finished_abs,
+        "total_elapsed_seconds": float(total_elapsed) if total_elapsed is not None else None,
+        "total_elapsed_hms": format_elapsed(total_elapsed) if total_elapsed is not None else None,
+        "run_stage": run_stage,
+        "completed_datasets": completed_datasets,
+        "cv_data_policy": {
+            "HAR": "train_only_for_tuning_and_cv",
+            "RAINFALL": "train_only_for_tuning_and_cv",
+            "IRIS": "full_dataset_cv",
+            "SONAR": "full_dataset_cv",
+            "YEAST": "full_dataset_cv",
+        },
+        "datasets": selected_datasets,
+        "methods": selected_methods,
+        "scope": args.scope,
+        "learning_rates": learning_rates,
+        "inner_splits": args.inner_splits,
+        "outer_splits_override": args.outer_splits,
+        "seed": args.seed,
+        "n_jobs": args.n_jobs,
+        "gbm_subsample": 0.6,
+        "holdout_test_datasets": ["HAR", "RAINFALL"],
+        "note": "LdaBoost class does not expose subsample; only GBM-based pipelines fix subsample=0.6.",
+    }
+    with config_json_path.open("w", encoding="utf-8") as f:
+        json.dump(run_cfg, f, indent=2)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run Point 1 retuning on real datasets.")
     parser.add_argument(
@@ -530,9 +617,9 @@ def main() -> None:
 
     fold_accuracies: Dict[str, Dict[str, List[float]]] = {}
     best_params_rows = []
-    summary_rows = []
     fold_timing_rows = []
     holdout_test_rows = []
+    completed_datasets: List[str] = []
 
     for dataset_name in selected_datasets:
         print(f"\n=== Dataset: {dataset_name} ===")
@@ -608,17 +695,22 @@ def main() -> None:
                 }
             )
 
-        for method_name, accs in fold_accuracies[dataset_name].items():
-            arr = np.array(accs, dtype=float)
-            summary_rows.append(
-                {
-                    "dataset": dataset_name,
-                    "method": method_name,
-                    "mean_accuracy": float(np.mean(arr)),
-                    "std_accuracy": float(np.std(arr, ddof=1)) if len(arr) > 1 else 0.0,
-                    "n_folds": int(len(arr)),
-                }
-            )
+        completed_datasets.append(dataset_name)
+        persist_outputs(
+            output_dir=output_dir,
+            fold_accuracies=fold_accuracies,
+            best_params_rows=best_params_rows,
+            fold_timing_rows=fold_timing_rows,
+            holdout_test_rows=holdout_test_rows,
+            total_start_abs=total_start_abs,
+            selected_datasets=selected_datasets,
+            selected_methods=selected_methods,
+            args=args,
+            learning_rates=learning_rates,
+            completed_datasets=completed_datasets,
+            run_stage=f"dataset_completed:{dataset_name}",
+        )
+        print(f"[CHECKPOINT] wrote partial results after dataset {dataset_name}")
 
     print("\n=== Holdout test evaluation (HAR, RAINFALL) ===")
     holdout_start_perf = time.perf_counter()
@@ -630,6 +722,13 @@ def main() -> None:
     }
     for dataset_name, loader in holdout_loaders.items():
         x_train, y_train_raw, x_test, y_test_raw = loader(PROJECT_ROOT / "real_datasets")
+
+        if y_test_raw is None:
+            print(
+                f"[HOLDOUT] skip {dataset_name}: test target column is missing; "
+                f"holdout test accuracy cannot be computed."
+            )
+            continue
 
         encoder = LabelEncoder()
         encoder.fit(np.concatenate([y_train_raw, y_test_raw], axis=0))
@@ -685,47 +784,35 @@ def main() -> None:
         f"| elapsed {format_elapsed(holdout_end_perf - holdout_start_perf)}"
     )
 
-    fold_json_path = output_dir / "point1_retune_fold_accuracies.json"
-    summary_csv_path = output_dir / "point1_retune_fold_accuracy_summary.csv"
-    best_csv_path = output_dir / "point1_retune_best_params.csv"
-    fold_timing_csv_path = output_dir / "point1_retune_fold_timing.csv"
-    holdout_csv_path = output_dir / "point1_retune_holdout_test_accuracy.csv"
-    config_json_path = output_dir / "point1_retune_run_config.json"
-
-    with fold_json_path.open("w", encoding="utf-8") as f:
-        json.dump(fold_accuracies, f, indent=2)
-
-    pd.DataFrame(summary_rows).to_csv(summary_csv_path, index=False)
-    pd.DataFrame(best_params_rows).to_csv(best_csv_path, index=False)
-    pd.DataFrame(fold_timing_rows).to_csv(fold_timing_csv_path, index=False)
-    pd.DataFrame(holdout_test_rows).to_csv(holdout_csv_path, index=False)
-
     total_end_perf = time.perf_counter()
     total_end_abs = now_utc_iso()
     total_elapsed = total_end_perf - total_start_perf
 
     print(f"[RUN] end: {total_end_abs} | total elapsed {format_elapsed(total_elapsed)}")
 
-    run_cfg = {
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "run_started_at": total_start_abs,
-        "run_finished_at": total_end_abs,
-        "total_elapsed_seconds": float(total_elapsed),
-        "total_elapsed_hms": format_elapsed(total_elapsed),
-        "datasets": selected_datasets,
-        "methods": selected_methods,
-        "scope": args.scope,
-        "learning_rates": learning_rates,
-        "inner_splits": args.inner_splits,
-        "outer_splits_override": args.outer_splits,
-        "seed": args.seed,
-        "n_jobs": args.n_jobs,
-        "gbm_subsample": 0.6,
-        "holdout_test_datasets": ["HAR", "RAINFALL"],
-        "note": "LdaBoost class does not expose subsample; only GBM-based pipelines fix subsample=0.6.",
-    }
-    with config_json_path.open("w", encoding="utf-8") as f:
-        json.dump(run_cfg, f, indent=2)
+    persist_outputs(
+        output_dir=output_dir,
+        fold_accuracies=fold_accuracies,
+        best_params_rows=best_params_rows,
+        fold_timing_rows=fold_timing_rows,
+        holdout_test_rows=holdout_test_rows,
+        total_start_abs=total_start_abs,
+        selected_datasets=selected_datasets,
+        selected_methods=selected_methods,
+        args=args,
+        learning_rates=learning_rates,
+        completed_datasets=completed_datasets,
+        run_stage="finished",
+        run_finished_abs=total_end_abs,
+        total_elapsed=total_elapsed,
+    )
+
+    fold_json_path = output_dir / "point1_retune_fold_accuracies.json"
+    summary_csv_path = output_dir / "point1_retune_fold_accuracy_summary.csv"
+    best_csv_path = output_dir / "point1_retune_best_params.csv"
+    fold_timing_csv_path = output_dir / "point1_retune_fold_timing.csv"
+    holdout_csv_path = output_dir / "point1_retune_holdout_test_accuracy.csv"
+    config_json_path = output_dir / "point1_retune_run_config.json"
 
     print("\nRun complete.")
     print(f"- Fold accuracies: {fold_json_path}")

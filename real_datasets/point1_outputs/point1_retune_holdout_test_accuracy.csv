@@ -1,0 +1,4 @@
+dataset,method,train_size,test_size,inner_splits,test_accuracy,best_inner_cv_accuracy,runtime_seconds,best_params
+HAR,LDA+GBM,7352,2947,3,0.9528333898880217,0.9779649011787498,10.246883792000062,"{""gb__learning_rate"": 0.07}"
+HAR,PCA+GBM,7352,2947,3,0.9053274516457415,0.9415116417844168,652.6195341250004,"{""gb__learning_rate"": 0.1}"
+HAR,LdaBoost,7352,2947,3,0.9511367492365117,0.9771487966871776,286.2248633750005,"{""learning_rate"": 0.1, ""max_depth"": 3, ""n_estimators"": 100}"

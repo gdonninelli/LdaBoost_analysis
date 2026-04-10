@@ -61,6 +61,7 @@ Add future runs below to compare split settings:
 |---|---:|---:|---|---|---|
 | R1 | 3 | 3 | PCA+GBM, LDA+GBM | 00:31:06 | Baseline commit |
 | R2 | 3 | 3 | PCA+GBM, LDA+GBM | 14:32:36 | Full grid-search completed |
+| R3 | 3 | 3 | LDA+GBM, PCA+GBM, LdaBoost | checkpoint at dataset completion | Cross-validation completed on all datasets; holdout validation pending |
 
 ## Run R2 (completed)
 
@@ -118,9 +119,48 @@ cd "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoo
 | YEAST | 00:03:04 |
 
 
----
-(R3)
+## Run R3 (cross-validation completed, holdout pending)
+
+- Outer splits: 3
+- Inner splits: 3
+- Methods: LDA+GBM, PCA+GBM, LdaBoost
+- Scope: learning-rate-only
+- Learning-rate grid: 0.03, 0.05, 0.07, 0.10
+- Seed: 42
+- n_jobs: 8
+- Run stage from config: `dataset_completed:YEAST` (all CV datasets completed; final holdout block not completed)
+
+Command used/planned:
 
 ```bash
-/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis" && /Users/giuliodonninelli/.local/share/virtualenvs/remarkable-substack-D7zpFFy-/bin/python real_datasets/run_point1_retuning.py --methods GBM, LdaBoost --scope full --outer-splits 3 --inner-splits 3 --learning-rates 0.03,0.05,0.07,0.10  --n-jobs 8
+cd "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis" && /Users/giuliodonninelli/.local/share/virtualenvs/remarkable-substack-D7zpFFy-/bin/python real_datasets/run_point1_retuning.py --methods "LDA+GBM,PCA+GBM,LdaBoost" --scope learning-rate-only --outer-splits 3 --inner-splits 3 --learning-rates 0.03,0.05,0.07,0.10 --n-jobs 8
 ```
+
+Source files used for R3 status:
+- `point1_retune_run_config.json`
+- `point1_retune_fold_accuracy_summary.csv`
+- `point1_retune_best_params.csv`
+- `point1_retune_fold_timing.csv`
+- `point1_retune_holdout_test_accuracy.csv` (currently empty)
+
+### Cross-validated accuracy table (R3)
+
+| Dataset | GBM | LDA+GBM | PCA+GBM | LdaBoost |
+|---|---:|---:|---:|---:|
+| HAR | 0.995 ± 0.002 | 0.978 ± 0.004 | 0.942 ± 0.006 | 0.978 ± 0.006 |
+| RAINFALL | 0.861 ± 0.025 | 0.860 ± 0.021 | 0.863 ± 0.015 | 0.864 ± 0.025 |
+| IRIS | 0.960 ± 0.044 | 0.980 ± 0.020 | 0.967 ± 0.031 | 0.967 ± 0.031 |
+| SONAR | 0.694 ± 0.173 | 0.688 ± 0.052 | 0.764 ± 0.016 | 0.721 ± 0.075 |
+| YEAST | 0.568 ± 0.037 | 0.614 ± 0.030 | 0.582 ± 0.023 | 0.589 ± 0.032 |
+
+### Mean runtime by dataset and method (R3, per outer fold)
+
+| Dataset | LDA+GBM | PCA+GBM | LdaBoost |
+|---|---:|---:|---:|
+| HAR | 00:00:09 | 00:06:47 | 00:03:24 |
+| RAINFALL | 00:00:01 | 00:00:01 | 00:00:02 |
+| IRIS | 00:00:00 | 00:00:00 | 00:00:02 |
+| SONAR | 00:00:00 | 00:00:00 | 00:00:02 |
+| YEAST | 00:00:03 | 00:00:03 | 00:00:16 |
+
+From a computational perspective, the LDA-based approaches remain very competitive while keeping strong accuracy. One-shot LDA+GBM is generally the fastest option (and in HAR it is dramatically faster than PCA+GBM), while still delivering high predictive performance. At the same time, LdaBoost deserves a positive emphasis: despite its iterative LDA updates, it keeps a favorable speed-accuracy trade-off, remains substantially faster than PCA+GBM on massive dataset such as HAR, and preserves consistently strong predictive performance across datasets.
