@@ -47,3 +47,28 @@ Holdout setup for this block:
 | LdaBoost | 286.22 | 2.33 |
 
 From a computational perspective, the LDA-based approaches remain very competitive while keeping strong accuracy. One-shot LDA+GBM is generally the fastest option (and in HAR it is dramatically faster than PCA+GBM), while still delivering high predictive performance. At the same time, LdaBoost deserves a positive emphasis: despite its iterative LDA updates, it keeps a favorable speed-accuracy trade-off, remains substantially faster than PCA+GBM on massive dataset such as HAR, and preserves consistently strong predictive performance across datasets.
+
+### LDA Components Ablation
+
+This ablation evaluates the effect of the LDA dimensionality (`n_components`) on accuracy and runtime.
+
+Cross-validation summary:
+
+| Dataset | n_components | CV Accuracy (mean ± std) | Fit Time (s, mean) | Total Time (s, mean) | Folds |
+|---|---:|---:|---:|---:|---:|
+| HAR | 1 | 0.6211 ± 0.0125 | 1.7503 | 1.7630 | 10 |
+| HAR | 3 | 0.8592 ± 0.0133 | 2.6156 | 2.6279 | 10 |
+| HAR | 5 | **0.9800 ± 0.0059** | 3.6912 | 3.7038 | 10 |
+| YEAST | 1 | 0.3834 ± 0.0476 | 0.4157 | 0.4190 | 5 |
+| YEAST | 5 | 0.5566 ± 0.0544 | 0.9966 | 1.0002 | 5 |
+| YEAST | 9 | **0.5964 ± 0.0354** | 1.4292 | 1.4328 | 5 |
+
+Holdout summary (HAR official split):
+
+| Dataset | n_components | Train Size | Test Size | Test Accuracy | Fit Time (s) | Total Time (s) |
+|---|---:|---:|---:|---:|---:|---:|
+| HAR | 1 | 7352 | 2947 | 0.5765 | 4.2965 | 4.3155 |
+| HAR | 3 | 7352 | 2947 | 0.8208 | 2.9395 | 2.9534 |
+| HAR | 5 | 7352 | 2947 | **0.9535** | 4.2542 | 4.2724 |
+
+Overall, increasing `n_components` consistently improves predictive performance in both CV and holdout evaluation. The best-performing configuration in HAR is `n_components = 5`, while YEAST reaches its best CV performance at `n_components = 9`.
