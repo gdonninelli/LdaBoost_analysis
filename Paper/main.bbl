@@ -1,0 +1,208 @@
+\begin{thebibliography}{40}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Bacanin et~al.(2021)Bacanin, Zivkovic, Bezdan, Cvetnic, and Gajic]{bacanin2021dimensionality}
+Nebojsa Bacanin, Miodrag Zivkovic, Timea Bezdan, Dusan Cvetnic, and Luka Gajic.
+\newblock Dimensionality reduction using hybrid brainstorm optimization algorithm.
+\newblock In \emph{Proceedings of International Conference on Data Science and Applications: ICDSA 2021, Volume 2}, pages 679--692. Springer, 2021.
+
+\bibitem[Belkin and Niyogi(2003)]{belkin2003laplacian}
+Mikhail Belkin and Partha Niyogi.
+\newblock Laplacian eigenmaps for dimensionality reduction and data representation.
+\newblock \emph{Neural computation}, 15\penalty0 (6):\penalty0 1373--1396, 2003.
+
+\bibitem[Bengio et~al.(2003)Bengio, Paiement, Vincent, Delalleau, Roux, and Ouimet]{bengio2003out}
+Yoshua Bengio, Jean-fran{\c{c}}cois Paiement, Pascal Vincent, Olivier Delalleau, Nicolas Roux, and Marie Ouimet.
+\newblock Out-of-sample extensions for lle, isomap, mds, eigenmaps, and spectral clustering.
+\newblock \emph{Advances in neural information processing systems}, 16, 2003.
+
+\bibitem[Bradley and Schapire(2008)]{bradley2008filterboost}
+Joseph~K. Bradley and Robert~E. Schapire.
+\newblock Filterboost: Regression and classification on large datasets.
+\newblock \emph{Advances in Neural Information Processing Systems}, 20:\penalty0 185--192, 2008.
+
+\bibitem[Cann()]{cannfeature}
+Matthew Cann.
+\newblock Feature reduction using pca, lda, and pca+ lda to improve decision tree c4. 5 classification of human activity recognition dataset.
+
+\bibitem[Chen and Guestrin(2016)]{chen2016xgboost}
+Tianqi Chen and Carlos Guestrin.
+\newblock Xgboost: A scalable tree boosting system.
+\newblock In \emph{Proceedings of the 22nd acm sigkdd international conference on knowledge discovery and data mining}, pages 785--794, 2016.
+
+\bibitem[Demiriz et~al.(2002)Demiriz, Bennett, and Shawe-Taylor]{demiriz2002lpboost}
+Ayhan Demiriz, Kristin~P. Bennett, and John Shawe-Taylor.
+\newblock Linear programming boosting via column generation.
+\newblock \emph{Machine Learning}, 46\penalty0 (1-3):\penalty0 225--254, 2002.
+
+\bibitem[Dempster et~al.(1977)Dempster, Laird, and Rubin]{dempster1977em}
+Arthur~P. Dempster, Nan~M. Laird, and Donald~B. Rubin.
+\newblock Maximum likelihood from incomplete data via the em algorithm.
+\newblock \emph{Journal of the Royal Statistical Society: Series B}, 39\penalty0 (1):\penalty0 1--38, 1977.
+
+\bibitem[Elkan(2001)]{elkan2001cost}
+Charles Elkan.
+\newblock The foundations of cost-sensitive learning.
+\newblock \emph{Proceedings of the 17th International Joint Conference on Artificial Intelligence (IJCAI)}, pages 973--978, 2001.
+
+\bibitem[Fan and Fan(2008)]{fan2008highdim}
+Jianqing Fan and Yingying Fan.
+\newblock High dimensional classification using features annealed independence rules.
+\newblock \emph{Annals of Statistics}, 36\penalty0 (6):\penalty0 2605--2637, 2008.
+
+\bibitem[Fern{\'a}ndez-Delgado et~al.(2014)Fern{\'a}ndez-Delgado, Cernadas, Barro, and Amorim]{fernandez2014we}
+Manuel Fern{\'a}ndez-Delgado, Eva Cernadas, Sen{\'e}n Barro, and Dinani Amorim.
+\newblock Do we need hundreds of classifiers to solve real world classification problems?
+\newblock \emph{The journal of machine learning research}, 15\penalty0 (1):\penalty0 3133--3181, 2014.
+
+\bibitem[Feurer et~al.(2015)Feurer, Klein, Eggensperger, Springenberg, Blum, and Hutter]{NIPS2015_11d0e628}
+Matthias Feurer, Aaron Klein, Katharina Eggensperger, Jost Springenberg, Manuel Blum, and Frank Hutter.
+\newblock Efficient and robust automated machine learning.
+\newblock In C.~Cortes, N.~Lawrence, D.~Lee, M.~Sugiyama, and R.~Garnett, editors, \emph{Advances in Neural Information Processing Systems}, volume~28. Curran Associates, Inc., 2015.
+\newblock URL \url{https://proceedings.neurips.cc/paper_files/paper/2015/file/11d0e6287202fced83f79975ec59a3a6-Paper.pdf}.
+
+\bibitem[Friedman(2001{\natexlab{a}})]{friedman2001gbm}
+Jerome~H. Friedman.
+\newblock Greedy function approximation: A gradient boosting machine.
+\newblock \emph{Annals of Statistics}, 29\penalty0 (5):\penalty0 1189--1232, 2001{\natexlab{a}}.
+
+\bibitem[Friedman(2001{\natexlab{b}})]{friedman2001greedy}
+Jerome~H Friedman.
+\newblock Greedy function approximation: a gradient boosting machine.
+\newblock \emph{Annals of statistics}, pages 1189--1232, 2001{\natexlab{b}}.
+
+\bibitem[Fukunaga(2013)]{fukunaga2013introduction}
+Keinosuke Fukunaga.
+\newblock \emph{Introduction to statistical pattern recognition}.
+\newblock Elsevier, 2013.
+
+\bibitem[Gabriel and Anbarasi(2023)]{gabriel2023optimizing}
+J~Jasmine Gabriel and L~Jani Anbarasi.
+\newblock Optimizing coronary artery disease diagnosis: A heuristic approach using robust data preprocessing and automated hyperparameter tuning of extreme gradient boosting.
+\newblock \emph{Ieee Access}, 11:\penalty0 112988--113007, 2023.
+
+\bibitem[Garc{\'\i}a-Torres et~al.(2023)Garc{\'\i}a-Torres, Ruiz, and Divina]{garcia2023evolutionary}
+Miguel Garc{\'\i}a-Torres, Roberto Ruiz, and Federico Divina.
+\newblock Evolutionary feature selection on high dimensional data using a search space reduction approach.
+\newblock \emph{Engineering Applications of Artificial Intelligence}, 117:\penalty0 105556, 2023.
+
+\bibitem[Hastie et~al.(2009)Hastie, Tibshirani, and Friedman]{hastie2009elements}
+Trevor Hastie, Robert Tibshirani, and Jerome Friedman.
+\newblock \emph{The Elements of Statistical Learning}.
+\newblock Springer, 2009.
+
+\bibitem[Hu et~al.(2024)Hu, Shukla, Karniadakis, and Kawaguchi]{hu2024tackling}
+Zheyuan Hu, Khemraj Shukla, George~Em Karniadakis, and Kenji Kawaguchi.
+\newblock Tackling the curse of dimensionality with physics-informed neural networks.
+\newblock \emph{Neural Networks}, 176:\penalty0 106369, 2024.
+
+\bibitem[Huang et~al.(2019)Huang, Wu, and Ye]{huang2019review}
+Xuan Huang, Lei Wu, and Yinsong Ye.
+\newblock A review on dimensionality reduction techniques.
+\newblock \emph{International Journal of Pattern Recognition and Artificial Intelligence}, 33\penalty0 (10):\penalty0 1950017, 2019.
+
+\bibitem[Hughes(1968)]{hughes1968mean}
+Gordon Hughes.
+\newblock On the mean accuracy of statistical pattern recognizers.
+\newblock \emph{IEEE transactions on information theory}, 14\penalty0 (1):\penalty0 55--63, 1968.
+
+\bibitem[James et~al.(2013)James, Witten, Hastie, Tibshirani, et~al.]{james2013introduction}
+Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani, et~al.
+\newblock \emph{An introduction to statistical learning}, volume 112.
+\newblock Springer, 2013.
+
+\bibitem[K{\'e}gl et~al.(2009)K{\'e}gl, Liao, et~al.]{kegl2009kernelboost}
+Bal{\'a}zs K{\'e}gl, Wen-Yen Liao, et~al.
+\newblock Boosting with kernel projections.
+\newblock In \emph{Advances in Neural Information Processing Systems}, volume~21, 2009.
+
+\bibitem[Leo et~al.(2014)Leo, Distante, Bernabei, and Persaud]{leo2014efficient}
+Marco Leo, Cosimo Distante, Mara Bernabei, and Krishna Persaud.
+\newblock An efficient approach for preprocessing data from a large-scale chemical sensor array.
+\newblock \emph{Sensors}, 14\penalty0 (9):\penalty0 17786--17806, 2014.
+
+\bibitem[Li et~al.(2009)Li, Zhao, and Zhang]{li2009face}
+Jianke Li, Baojun Zhao, and Hui Zhang.
+\newblock Face recognition based on pca and lda combination feature extraction.
+\newblock In \emph{2009 First International Conference on Information Science and Engineering}, pages 1240--1243. IEEE, 2009.
+
+\bibitem[Liu et~al.(2019)Liu, Wang, Liu, and Zhang]{liu2019discriminative}
+Zhonghua Liu, Jingjing Wang, Gang Liu, and Lin Zhang.
+\newblock Discriminative low-rank preserving projection for dimensionality reduction.
+\newblock \emph{Applied soft computing}, 85:\penalty0 105768, 2019.
+
+\bibitem[Lu{\v{s}}trek and Kalu{\v{z}}a(2009)]{luvstrek2009fall}
+Mitja Lu{\v{s}}trek and Bo{\v{s}}tjan Kalu{\v{z}}a.
+\newblock Fall detection and activity recognition with machine learning.
+\newblock \emph{Informatica}, 33\penalty0 (2), 2009.
+
+\bibitem[Ma and Yuan(2019)]{ma2019dimension}
+Ji~Ma and Yuyu Yuan.
+\newblock Dimension reduction of image deep feature using pca.
+\newblock \emph{Journal of Visual Communication and Image Representation}, 63:\penalty0 102578, 2019.
+
+\bibitem[Pechenizkiy et~al.(2006)Pechenizkiy, Tsymbal, and Puuronen]{pechenizkiy2006combining}
+Mykola Pechenizkiy, Alexey Tsymbal, and Seppo Puuronen.
+\newblock On combining principal components with fisher's linear discriminants for supervised learning.
+\newblock \emph{Foundations of Computing and Decision Sciences}, 31\penalty0 (1):\penalty0 59--74, 2006.
+
+\bibitem[Rakhshan and Rabusseau(2020)]{rakhshan2020tensorized}
+Beheshteh Rakhshan and Guillaume Rabusseau.
+\newblock Tensorized random projections.
+\newblock In \emph{International Conference on Artificial Intelligence and Statistics}, pages 3306--3316. PMLR, 2020.
+
+\bibitem[Roweis and Saul(2000)]{roweis2000nonlinear}
+Sam~T Roweis and Lawrence~K Saul.
+\newblock Nonlinear dimensionality reduction by locally linear embedding.
+\newblock \emph{science}, 290\penalty0 (5500):\penalty0 2323--2326, 2000.
+
+\bibitem[Sadegh-Zadeh et~al.(2024)Sadegh-Zadeh, Sadeghzadeh, Soleimani, Ghidary, Movahedi, and Mousavi]{sadegh2024comparative}
+Seyed-Ali Sadegh-Zadeh, Nasrin Sadeghzadeh, Ommolbanin Soleimani, Saeed~Shiry Ghidary, Sobhan Movahedi, and Seyed-Yaser Mousavi.
+\newblock Comparative analysis of dimensionality reduction techniques for eeg-based emotional state classification.
+\newblock \emph{American Journal of Neurodegenerative Disease}, 13\penalty0 (4):\penalty0 23, 2024.
+
+\bibitem[Subasi and Gursoy(2010)]{subasi2010eeg}
+Abdulhamit Subasi and M~Ismail Gursoy.
+\newblock Eeg signal classification using pca, ica, lda and support vector machines.
+\newblock \emph{Expert systems with applications}, 37\penalty0 (12):\penalty0 8659--8666, 2010.
+
+\bibitem[Sugiyama(2007)]{sugiyama2007lda}
+Masashi Sugiyama.
+\newblock Dimensionality reduction of multimodal labeled data by local fisher discriminant analysis.
+\newblock \emph{Journal of Machine Learning Research}, 8:\penalty0 1027--1061, 2007.
+
+\bibitem[Tenenbaum et~al.(2000)Tenenbaum, Silva, and Langford]{tenenbaum2000global}
+Joshua~B Tenenbaum, Vin~de Silva, and John~C Langford.
+\newblock A global geometric framework for nonlinear dimensionality reduction.
+\newblock \emph{science}, 290\penalty0 (5500):\penalty0 2319--2323, 2000.
+
+\bibitem[Van Der~Maaten et~al.(2009)Van Der~Maaten, Postma, Van Den~Herik, et~al.]{van2009dimensionality}
+Laurens Van Der~Maaten, Eric~O Postma, H~Jaap Van Den~Herik, et~al.
+\newblock Dimensionality reduction: A comparative review.
+\newblock \emph{Journal of machine learning research}, 10\penalty0 (66-71):\penalty0 13, 2009.
+
+\bibitem[Yang and Yang(2003)]{yang2003can}
+Jian Yang and Jing-yu Yang.
+\newblock Why can lda be performed in pca transformed space?
+\newblock \emph{Pattern recognition}, 36\penalty0 (2):\penalty0 563--566, 2003.
+
+\bibitem[Zadrozny et~al.(2003)Zadrozny, Langford, and Abe]{zadrozny2003cost}
+Bianca Zadrozny, John Langford, and Naoki Abe.
+\newblock Cost-sensitive learning by cost-proportionate example weighting.
+\newblock \emph{Proceedings of the Third IEEE International Conference on Data Mining (ICDM)}, pages 435--442, 2003.
+
+\bibitem[Zebari et~al.(2020)Zebari, Abdulazeez, Zeebaree, Zebari, and Saeed]{zebari2020comprehensive}
+Rizgar Zebari, Adnan Abdulazeez, Diyar Zeebaree, Dilovan Zebari, and Jwan Saeed.
+\newblock A comprehensive review of dimensionality reduction techniques for feature selection and feature extraction.
+\newblock \emph{Journal of Applied Science and Technology Trends}, 1\penalty0 (1):\penalty0 56--70, 2020.
+
+\bibitem[Zhou et~al.(2011)Zhou, Tao, and Wu]{zhou2011manifold}
+Tianyi Zhou, Dacheng Tao, and Xindong Wu.
+\newblock Manifold elastic net: a unified framework for sparse dimension reduction.
+\newblock \emph{Data Mining and Knowledge Discovery}, 22:\penalty0 340--371, 2011.
+
+\end{thebibliography}

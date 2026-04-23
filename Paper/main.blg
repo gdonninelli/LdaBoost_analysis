@@ -1,0 +1,55 @@
+This is BibTeX, Version 0.99d (TeX Live 2024)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: plainnat.bst
+Database file #1: references.bib
+Repeated entry---line 352 of file references.bib
+ : @article{friedman2001gbm
+ :                         ,
+I'm skipping whatever remains of this entry
+Warning--empty journal in cannfeature
+Warning--empty year in cannfeature
+Warning--empty year in cannfeature
+Warning--can't use both volume and number fields in james2013introduction
+You've used 40 entries,
+            2773 wiz_defined-function locations,
+            841 strings with 12504 characters,
+and the built_in function-call counts, 20137 in all, are:
+= -- 1811
+> -- 1155
+< -- 28
++ -- 391
+- -- 350
+* -- 1676
+:= -- 3045
+add.period$ -- 124
+call.type$ -- 40
+change.case$ -- 229
+chr.to.int$ -- 39
+cite$ -- 84
+duplicate$ -- 906
+empty$ -- 1642
+format.name$ -- 412
+if$ -- 4241
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 43
+newline$ -- 208
+num.names$ -- 162
+pop$ -- 446
+preamble$ -- 1
+purify$ -- 192
+quote$ -- 0
+skip$ -- 704
+stack$ -- 0
+substring$ -- 934
+swap$ -- 120
+text.length$ -- 10
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 425
+warning$ -- 4
+while$ -- 185
+width$ -- 0
+write$ -- 527
+(There was 1 error message)
