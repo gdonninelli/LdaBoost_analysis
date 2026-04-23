@@ -3,10 +3,6 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: plainnat.bst
 Database file #1: references.bib
-Repeated entry---line 352 of file references.bib
- : @article{friedman2001gbm
- :                         ,
-I'm skipping whatever remains of this entry
 Warning--empty journal in cannfeature
 Warning--empty year in cannfeature
 Warning--empty year in cannfeature
@@ -52,4 +48,4 @@ warning$ -- 4
 while$ -- 185
 width$ -- 0
 write$ -- 527
-(There was 1 error message)
+(There were 4 warnings)

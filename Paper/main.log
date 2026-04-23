@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.28)  23 APR 2026 08:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.28)  23 APR 2026 10:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -779,123 +779,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 65--66
 [1
 
 {/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
-
-Package natbib Warning: Citation `van2009dimensionality' on page 2 undefined on input line 78.
-
-
-Package natbib Warning: Citation `huang2019review' on page 2 undefined on input line 78.
-
-
-Package natbib Warning: Citation `bacanin2021dimensionality' on page 2 undefined on input line 78.
-
-
-Package natbib Warning: Citation `hu2024tackling' on page 2 undefined on input line 81.
-
-
-Package natbib Warning: Citation `garcia2023evolutionary' on page 2 undefined on input line 82.
-
-
-Package natbib Warning: Citation `fukunaga2013introduction' on page 2 undefined on input line 84.
-
-
-Package natbib Warning: Citation `james2013introduction' on page 2 undefined on input line 85.
-
-
-Package natbib Warning: Citation `zhou2011manifold' on page 2 undefined on input line 87.
-
-
-Package natbib Warning: Citation `roweis2000nonlinear' on page 2 undefined on input line 88.
-
-
-Package natbib Warning: Citation `tenenbaum2000global' on page 2 undefined on input line 88.
-
-
-Package natbib Warning: Citation `belkin2003laplacian' on page 2 undefined on input line 88.
-
-
-Package natbib Warning: Citation `bengio2003out' on page 2 undefined on input line 89.
-
-
-Package natbib Warning: Citation `zebari2020comprehensive' on page 2 undefined on input line 89.
-
-
-Package natbib Warning: Citation `sadegh2024comparative' on page 2 undefined on input line 89.
-
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <10.95> on input line 92.
-[2{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}]
-
-Package natbib Warning: Citation `fernandez2014we' on page 3 undefined on input line 94.
-
-
-Package natbib Warning: Citation `chen2016xgboost' on page 3 undefined on input line 94.
-
-
-Package natbib Warning: Citation `chen2016xgboost' on page 3 undefined on input line 97.
-
-
-Package natbib Warning: Citation `gabriel2023optimizing' on page 3 undefined on input line 98.
-
-
-Package natbib Warning: Citation `chen2016xgboost' on page 3 undefined on input line 98.
-
-
-Package natbib Warning: Citation `demiriz2002lpboost' on page 3 undefined on input line 100.
-
-
-Package natbib Warning: Citation `bradley2008filterboost' on page 3 undefined on input line 100.
-
-
-Package natbib Warning: Citation `kegl2009kernelboost' on page 3 undefined on input line 102.
-
-[3]
-
-Package natbib Warning: Citation `rakhshan2020tensorized' on page 4 undefined on input line 107.
-
-
-Package natbib Warning: Citation `NIPS2015_11d0e628' on page 4 undefined on input line 108.
-
-
-Package natbib Warning: Citation `zebari2020comprehensive' on page 4 undefined on input line 119.
-
-[4]
-
-Package natbib Warning: Citation `ma2019dimension' on page 5 undefined on input line 129.
-
-
-Package natbib Warning: Citation `zebari2020comprehensive' on page 5 undefined on input line 129.
-
-
-Package natbib Warning: Citation `subasi2010eeg' on page 5 undefined on input line 133.
-
-
-Package natbib Warning: Citation `leo2014efficient' on page 5 undefined on input line 136.
-
-
-Package natbib Warning: Citation `luvstrek2009fall' on page 5 undefined on input line 139.
-
-
-Package natbib Warning: Citation `cannfeature' on page 5 undefined on input line 141.
-
-
-Package natbib Warning: Citation `pechenizkiy2006combining' on page 5 undefined on input line 143.
-
-
-Package natbib Warning: Citation `yang2003can' on page 5 undefined on input line 145.
-
-
-Package natbib Warning: Citation `li2009face' on page 5 undefined on input line 149.
-
-[5]
-
-Package natbib Warning: Citation `liu2019discriminative' on page 6 undefined on input line 151.
-
-[6]
-
-Package natbib Warning: Citation `friedman2001greedy' on page 7 undefined on input line 202.
-
+ [2{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}] [3] [4] [5] [6]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 202.
-(/usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmtt.fd
+ (/usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 Package microtype Info: Loading generic protrusion settings for font family
@@ -908,19 +796,23 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [8] [9] [10] [11]
 
-Package natbib Warning: Citation `luvstrek2009fall' on page 12 undefined on input line 395.
-
-
 LaTeX Font Warning: Font shape `T1/lmr/bx/sc' undefined
 (Font)              using `T1/lmr/bx/n' instead on input line 419.
 
-[12] [13]
-<figures/Accuracy over different number of features for a five class target.pdf, id=154, 505.89pt x 433.62pt>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[12]
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[13]
+<figures/Accuracy over different number of features for a five class target.pdf, id=259, 505.89pt x 433.62pt>
 File: figures/Accuracy over different number of features for a five class target.pdf Graphic file (type pdf)
 <use figures/Accuracy over different number of features for a five class target.pdf>
 Package pdftex.def Info: figures/Accuracy over different number of features for a five class target.pdf  used on input line 510.
 (pdftex.def)             Requested size: 271.7835pt x 232.96034pt.
-<figures/Accuracy over different number of features for a binary target.pdf, id=156, 505.89pt x 433.62pt>
+<figures/Accuracy over different number of features for a binary target.pdf, id=261, 505.89pt x 433.62pt>
 File: figures/Accuracy over different number of features for a binary target.pdf Graphic file (type pdf)
 <use figures/Accuracy over different number of features for a binary target.pdf>
 Package pdftex.def Info: figures/Accuracy over different number of features for a binary target.pdf  used on input line 521.
@@ -929,88 +821,47 @@ Package pdftex.def Info: figures/Accuracy over different number of features for 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[14 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a five class target.pdf>]
-<figures/ldaboost_accuracy_binary_1k.pdf, id=221, 570.58984pt x 423.08339pt>
+[14 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a five class target.pdf>] [15 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target.pdf>]
+<figures/ldaboost_accuracy_binary_1k.pdf, id=381, 570.58984pt x 423.08339pt>
 File: figures/ldaboost_accuracy_binary_1k.pdf Graphic file (type pdf)
 <use figures/ldaboost_accuracy_binary_1k.pdf>
 Package pdftex.def Info: figures/ldaboost_accuracy_binary_1k.pdf  used on input line 548.
 (pdftex.def)             Requested size: 271.7835pt x 201.52834pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<figures/ldaboost_accuracy_three class_1k.pdf, id=222, 570.58984pt x 423.08339pt>
+<figures/ldaboost_accuracy_three class_1k.pdf, id=382, 570.58984pt x 423.08339pt>
 File: figures/ldaboost_accuracy_three class_1k.pdf Graphic file (type pdf)
 <use figures/ldaboost_accuracy_three class_1k.pdf>
 Package pdftex.def Info: figures/ldaboost_accuracy_three class_1k.pdf  used on input line 557.
 (pdftex.def)             Requested size: 271.7835pt x 201.52834pt.
-<figures/ldaboost_accuracy_multiclass_1k.pdf, id=223, 570.58984pt x 423.08339pt>
+<figures/ldaboost_accuracy_multiclass_1k.pdf, id=383, 570.58984pt x 423.08339pt>
 File: figures/ldaboost_accuracy_multiclass_1k.pdf Graphic file (type pdf)
 <use figures/ldaboost_accuracy_multiclass_1k.pdf>
 Package pdftex.def Info: figures/ldaboost_accuracy_multiclass_1k.pdf  used on input line 563.
 (pdftex.def)             Requested size: 271.7835pt x 201.52834pt.
 
+
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[15 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target.pdf>]
-
-Package natbib Warning: Citation `hughes1968mean' on page 16 undefined on input line 574.
-
-<figures/ldaboost_accuracy_multiclass_10k.pdf, id=286, 570.58984pt x 423.08339pt>
+[16 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_binary_1k.pdf>] [17 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_three class_1k.pdf> </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_multiclass_1k.pdf>]
+<figures/ldaboost_accuracy_multiclass_10k.pdf, id=551, 570.58984pt x 423.08339pt>
 File: figures/ldaboost_accuracy_multiclass_10k.pdf Graphic file (type pdf)
 <use figures/ldaboost_accuracy_multiclass_10k.pdf>
 Package pdftex.def Info: figures/ldaboost_accuracy_multiclass_10k.pdf  used on input line 585.
 (pdftex.def)             Requested size: 271.7835pt x 201.52834pt.
-[16 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_binary_1k.pdf>]
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<figures/ldaboost_accuracy_binary_10k.pdf, id=339, 570.58984pt x 423.08339pt>
+<figures/ldaboost_accuracy_binary_10k.pdf, id=552, 570.58984pt x 423.08339pt>
 File: figures/ldaboost_accuracy_binary_10k.pdf Graphic file (type pdf)
 <use figures/ldaboost_accuracy_binary_10k.pdf>
 Package pdftex.def Info: figures/ldaboost_accuracy_binary_10k.pdf  used on input line 592.
 (pdftex.def)             Requested size: 271.7835pt x 201.52834pt.
 
+
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[17 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_three class_1k.pdf> </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_multiclass_1k.pdf>] [18 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_multiclass_10k.pdf> </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_binary_10k.pdf>]
-
-Package natbib Warning: Citation `friedman2001gbm' on page 19 undefined on input line 613.
-
-
-Package natbib Warning: Citation `elkan2001cost' on page 19 undefined on input line 620.
-
-
-Package natbib Warning: Citation `zadrozny2003cost' on page 19 undefined on input line 620.
-
-
-Package natbib Warning: Citation `dempster1977em' on page 19 undefined on input line 620.
-
-[19]
-
-Package natbib Warning: Citation `hastie2009elements' on page 20 undefined on input line 628.
-
-
-Package natbib Warning: Citation `friedman2001gbm' on page 20 undefined on input line 628.
-
-
-Package natbib Warning: Citation `hastie2009elements' on page 20 undefined on input line 630.
-
-
-Package natbib Warning: Citation `sugiyama2007lda' on page 20 undefined on input line 630.
-
-
-Package natbib Warning: Citation `fan2008highdim' on page 20 undefined on input line 630.
-
-[20]
-
-Package natbib Warning: Citation `luvstrek2009fall' on page 21 undefined on input line 650.
-
+[18 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_multiclass_10k.pdf>] [19 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_binary_10k.pdf>] [20] [21]
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/9'.
 (microtype)             Ignoring protrusion settings for this character.
-[21]
-<figures/Accuracy over different number of features for a binary target (N=10,000).pdf, id=565, 505.89pt x 433.62pt>
+ [22]
+<figures/Accuracy over different number of features for a binary target (N=10,000).pdf, id=706, 505.89pt x 433.62pt>
 File: figures/Accuracy over different number of features for a binary target (N=10,000).pdf Graphic file (type pdf)
 <use figures/Accuracy over different number of features for a binary target (N=10,000).pdf>
 Package pdftex.def Info: figures/Accuracy over different number of features for a binary target (N=10,000).pdf  used on input line 734.
@@ -1019,7 +870,7 @@ Package pdftex.def Info: figures/Accuracy over different number of features for 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<figures/Accuracy over different number of features for a binary target low correlation.pdf, id=566, 505.89pt x 433.62pt>
+<figures/Accuracy over different number of features for a binary target low correlation.pdf, id=707, 505.89pt x 433.62pt>
 File: figures/Accuracy over different number of features for a binary target low correlation.pdf Graphic file (type pdf)
 <use figures/Accuracy over different number of features for a binary target low correlation.pdf>
 Package pdftex.def Info: figures/Accuracy over different number of features for a binary target low correlation.pdf  used on input line 740.
@@ -1027,7 +878,7 @@ Package pdftex.def Info: figures/Accuracy over different number of features for 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<figures/Accuracy over different number of features for a binary target high correlation.pdf, id=567, 505.89pt x 433.62pt>
+<figures/Accuracy over different number of features for a binary target high correlation.pdf, id=708, 505.89pt x 433.62pt>
 File: figures/Accuracy over different number of features for a binary target high correlation.pdf Graphic file (type pdf)
 <use figures/Accuracy over different number of features for a binary target high correlation.pdf>
 Package pdftex.def Info: figures/Accuracy over different number of features for a binary target high correlation.pdf  used on input line 746.
@@ -1035,16 +886,7 @@ Package pdftex.def Info: figures/Accuracy over different number of features for 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[22] (/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.bbl [23 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target (N=10,000).pdf> </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target low correlation.pdf>] [24 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target high correlation.pdf>] [25])
-
-Package natbib Warning: There were undefined citations.
-
-[26] (/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.aux
-
-Package natbib Warning: Citation(s) may have changed.
-(natbib)                Rerun to get citations correct.
-
-)
+[23] (/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.bbl [24 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target (N=10,000).pdf> </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target low correlation.pdf>] [25 </Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target high correlation.pdf>] [26]) [27] (/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
@@ -1057,18 +899,18 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: E3155DDE78BEBEA13A3D9D9B8A59CCCF;916.
  ) 
 Here is how much of TeX's memory you used:
- 26919 strings out of 474116
- 500878 string characters out of 5743682
- 1942187 words of memory out of 5000000
+ 26894 strings out of 474116
+ 500583 string characters out of 5743682
+ 1944187 words of memory out of 5000000
  48425 multiletter control sequences out of 15000+600000
- 665796 words of font info for 238 fonts, out of 8000000 for 9000
+ 664574 words of font info for 225 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  117i,14n,121p,1381b,796s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi9.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr9.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmri9.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.pdf" (26 pages, 643017 bytes).
+Output written on "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.pdf" (27 pages, 646984 bytes).
 PDF statistics:
- 909 PDF objects out of 1000 (max. 8388607)
- 379 compressed objects within 4 object streams
- 108 named destinations out of 1000 (max. 500000)
+ 1012 PDF objects out of 1200 (max. 8388607)
+ 480 compressed objects within 5 object streams
+ 109 named destinations out of 1000 (max. 500000)
  64119 words of extra memory for PDF output out of 74296 (max. 10000000)
 

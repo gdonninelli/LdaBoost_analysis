@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex /Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main"] 1776925467.86219 "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.aux" "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.bbl" "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main" 1776925467.95657 2
-  "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.aux" 1776925467.57136 11182 5a864526676338fab26077f03384a450 "pdflatex"
-  "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/references.bib" 1776887443.34339 12561 dae297f753eab8f4434c0e5f314bf111 ""
+["bibtex /Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main"] 1776934766.71508 "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.aux" "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.bbl" "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main" 1776934768.01587 0
+  "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.aux" 1776934767.64956 11182 879bc377832009c307aaa7ddaad87144 "pdflatex"
+  "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/references.bib" 1776934765.15961 12332 0f0f6e7c50cb5cf79264290143a39b04 ""
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/natbib/plainnat.bst" 1233624470 26816 ffe5423d2019860bad9f54bc402fac15 ""
   (generated)
   "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.bbl"
   "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.blg"
   (rewritten before read)
-["pdflatex"] 1776925466.75183 "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.tex" "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.pdf" "main" 1776925467.95668 0
+["pdflatex"] 1776934766.82062 "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.tex" "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.pdf" "main" 1776934768.0161 0
   "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target (N=10,000).pdf" 1776880936.66536 19241 7305926a0a901b48c6d3052608248055 ""
   "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target high correlation.pdf" 1776880936.66591 19607 afbfbdebe0cfa626597c7837c7fbc860 ""
   "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/Accuracy over different number of features for a binary target low correlation.pdf" 1776880936.66712 19597 9a3dc4616b835dda6e7a81d6e0182e20 ""
@@ -18,9 +18,9 @@
   "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_multiclass_10k.pdf" 1776880936.68609 18796 12f9a1266360b632fd501bfd8df63be7 ""
   "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_multiclass_1k.pdf" 1776880936.68696 18775 5e3206d488c7bc75225bf89e8e84d41f ""
   "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/figures/ldaboost_accuracy_three class_1k.pdf" 1776880936.68769 19038 87c668d07dca634c8e65d7da32922377 ""
-  "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.aux" 1776925467.57136 11182 5a864526676338fab26077f03384a450 "pdflatex"
-  "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.bbl" 1776925467.95282 12060 585ae7c45fa5de77e8aa3107928afbf3 "bibtex /Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main"
-  "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.out" 1776925467.57217 916 e3155dde78bebea13a3d9d9b8a59cccf "pdflatex"
+  "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.aux" 1776934767.64956 11182 879bc377832009c307aaa7ddaad87144 "pdflatex"
+  "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.bbl" 1776934766.815 12060 585ae7c45fa5de77e8aa3107928afbf3 "bibtex /Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main"
+  "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.out" 1776934767.6505 916 e3155dde78bebea13a3d9d9b8a59cccf "pdflatex"
   "/Users/giuliodonninelli/Documents/04 Università/01 Statistica UNIMIB/LdaBoost_analysis/Paper/main.tex" 1776925464.94097 82307 0e776ee1bd0f62f4b9d8b27935cd140f ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1254269338 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc" 1202520719 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
